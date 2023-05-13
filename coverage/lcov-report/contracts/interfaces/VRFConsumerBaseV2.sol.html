@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for contracts/interfaces/VRFConsumerBaseV2.sol</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../prettify.css" />
+    <link rel="stylesheet" href="../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../index.html">all files</a> / <a href="index.html">contracts/interfaces/</a> VRFConsumerBaseV2.sol
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>0/2</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>0/2</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>0/2</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>0/4</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line low'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.4;
+&nbsp;
+/** ****************************************************************************
+ * @notice Interface for contracts using VRF randomness
+ * *****************************************************************************
+ * @dev PURPOSE
+ *
+ * @dev Reggie the Random Oracle (not his real job) wants to provide randomness
+ * @dev to Vera the verifier in such a way that Vera can be sure he's not
+ * @dev making his output up to suit himself. Reggie provides Vera a public key
+ * @dev to which he knows the secret key. Each time Vera provides a seed to
+ * @dev Reggie, he gives back a value which is computed completely
+ * @dev deterministically from the seed and the secret key.
+ *
+ * @dev Reggie provides a proof by which Vera can verify that the output was
+ * @dev correctly computed once Reggie tells it to her, but without that proof,
+ * @dev the output is indistinguishable to her from a uniform random sample
+ * @dev from the output space.
+ *
+ * @dev The purpose of this contract is to make it easy for unrelated contracts
+ * @dev to talk to Vera the verifier about the work Reggie is doing, to provide
+ * @dev simple access to a verifiable source of randomness. It ensures 2 things:
+ * @dev 1. The fulfillment came from the VRFCoordinator
+ * @dev 2. The consumer contract implements fulfillRandomWords.
+ * *****************************************************************************
+ * @dev USAGE
+ *
+ * @dev Calling contracts must inherit from VRFConsumerBase, and can
+ * @dev initialize VRFConsumerBase's attributes in their constructor as
+ * @dev shown:
+ *
+ * @dev   contract VRFConsumer {
+ * @dev     constructor(&lt;other arguments&gt;, address _vrfCoordinator, address _link)
+ * @dev       VRFConsumerBase(_vrfCoordinator) public {
+ * @dev         &lt;initialization with other arguments goes here&gt;
+ * @dev       }
+ * @dev   }
+ *
+ * @dev The oracle will have given you an ID for the VRF keypair they have
+ * @dev committed to (let's call it keyHash). Create subscription, fund it
+ * @dev and your consumer contract as a consumer of it (see VRFCoordinatorInterface
+ * @dev subscription management functions).
+ * @dev Call requestRandomWords(keyHash, subId, minimumRequestConfirmations,
+ * @dev callbackGasLimit, numWords),
+ * @dev see (VRFCoordinatorInterface for a description of the arguments).
+ *
+ * @dev Once the VRFCoordinator has received and validated the oracle's response
+ * @dev to your request, it will call your contract's fulfillRandomWords method.
+ *
+ * @dev The randomness argument to fulfillRandomWords is a set of random words
+ * @dev generated from your requestId and the blockHash of the request.
+ *
+ * @dev If your contract could have concurrent requests open, you can use the
+ * @dev requestId returned from requestRandomWords to track which response is associated
+ * @dev with which randomness request.
+ * @dev See "SECURITY CONSIDERATIONS" for principles to keep in mind,
+ * @dev if your contract could have multiple requests in flight simultaneously.
+ *
+ * @dev Colliding `requestId`s are cryptographically impossible as long as seeds
+ * @dev differ.
+ *
+ * *****************************************************************************
+ * @dev SECURITY CONSIDERATIONS
+ *
+ * @dev A method with the ability to call your fulfillRandomness method directly
+ * @dev could spoof a VRF response with any random value, so it's critical that
+ * @dev it cannot be directly called by anything other than this base contract
+ * @dev (specifically, by the VRFConsumerBase.rawFulfillRandomness method).
+ *
+ * @dev For your users to trust that your contract's random behavior is free
+ * @dev from malicious interference, it's best if you can write it so that all
+ * @dev behaviors implied by a VRF response are executed *during* your
+ * @dev fulfillRandomness method. If your contract must store the response (or
+ * @dev anything derived from it) and use it later, you must ensure that any
+ * @dev user-significant behavior which depends on that stored value cannot be
+ * @dev manipulated by a subsequent VRF request.
+ *
+ * @dev Similarly, both miners and the VRF oracle itself have some influence
+ * @dev over the order in which VRF responses appear on the blockchain, so if
+ * @dev your contract could have multiple VRF requests in flight simultaneously,
+ * @dev you must ensure that the order in which the VRF responses arrive cannot
+ * @dev be used to manipulate your contract's user-significant behavior.
+ *
+ * @dev Since the block hash of the block which contains the requestRandomness
+ * @dev call is mixed into the input to the VRF *last*, a sufficiently powerful
+ * @dev miner could, in principle, fork the blockchain to evict the block
+ * @dev containing the request, forcing the request to be included in a
+ * @dev different block with a different hash, and therefore a different input
+ * @dev to the VRF. However, such an attack would incur a substantial economic
+ * @dev cost. This cost scales with the number of blocks the VRF oracle waits
+ * @dev until it calls responds to a request. It is for this reason that
+ * @dev that you can signal to an oracle you'd like them to wait longer before
+ * @dev responding to the request (however this is not enforced in the contract
+ * @dev and so remains effective only in the case of unmodified oracle software).
+ */
+abstract contract VRFConsumerBaseV2 {
+    error OnlyCoordinatorCanFulfill(address have, address want);
+    address private immutable vrfCoordinator;
+&nbsp;
+    /**
+     * @param _vrfCoordinator address of VRFCoordinator contract
+   */
+<span class="fstat-no" title="function not covered" >    constructor(address _vrfCoordinator) {</span>
+        vrfCoordinator = _vrfCoordinator;
+    }
+&nbsp;
+    /**
+     * @notice fulfillRandomness handles the VRF response. Your contract must
+   * @notice implement it. See "SECURITY CONSIDERATIONS" above for important
+   * @notice principles to keep in mind when implementing your fulfillRandomness
+   * @notice method.
+   *
+   * @dev VRFConsumerBaseV2 expects its subcontracts to have a method with this
+   * @dev signature, and will call it once it has verified the proof
+   * @dev associated with the randomness. (It is triggered via a call to
+   * @dev rawFulfillRandomness, below.)
+   *
+   * @param requestId The Id initially returned by requestRandomness
+   * @param randomWords the VRF output expanded to the requested number of words
+   */
+    function fulfillRandomWords(uint256 requestId, uint256[] memory randomWords) internal virtual;
+&nbsp;
+    // rawFulfillRandomness is called by VRFCoordinator when it receives a valid VRF
+    // proof. rawFulfillRandomness then calls fulfillRandomness, after validating
+    // the origin of the call
+<span class="fstat-no" title="function not covered" >    function rawFulfillRandomWords(uint256 requestId, uint256[] memory randomWords) external {</span>
+<span class="cstat-no" title="statement not covered" >        if (msg.sender != vrfCoordinator) {</span>
+            revert OnlyCoordinatorCanFulfill(msg.sender, vrfCoordinator);
+        }
+<span class="cstat-no" title="statement not covered" >        fulfillRandomWords(requestId, randomWords)</span>;
+    }
+}</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Sun Apr 30 2023 15:35:33 GMT+0400 (Armenia Standard Time)
+</div>
+</div>
+<script src="../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../sorter.js"></script>
+</body>
+</html>
