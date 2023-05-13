@@ -4,4 +4,3 @@
 export type { LinkTokenInterface } from "./LinkTokenInterface";
 export type { OwnableInterface } from "./OwnableInterface";
 export type { VRFCoordinatorV2Interface } from "./VRFCoordinatorV2Interface";
-export type { VRFV2WrapperInterface } from "./VRFV2WrapperInterface";

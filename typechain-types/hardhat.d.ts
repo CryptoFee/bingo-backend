@@ -33,17 +33,9 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.VRFCoordinatorV2Interface__factory>;
     getContractFactory(
-      name: "VRFV2WrapperInterface",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.VRFV2WrapperInterface__factory>;
-    getContractFactory(
       name: "VRFConsumerBaseV2",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.VRFConsumerBaseV2__factory>;
-    getContractFactory(
-      name: "VRFV2WrapperConsumerBase",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.VRFV2WrapperConsumerBase__factory>;
     getContractFactory(
       name: "ERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -111,20 +103,10 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.VRFCoordinatorV2Interface>;
     getContractAt(
-      name: "VRFV2WrapperInterface",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.VRFV2WrapperInterface>;
-    getContractAt(
       name: "VRFConsumerBaseV2",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.VRFConsumerBaseV2>;
-    getContractAt(
-      name: "VRFV2WrapperConsumerBase",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.VRFV2WrapperConsumerBase>;
     getContractAt(
       name: "ERC20",
       address: string,

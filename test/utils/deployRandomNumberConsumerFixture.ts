@@ -15,8 +15,6 @@ export const createRandomNumberConsumerFixtureDeploy = () => {
 
         const chainId = network.config.chainId || 0
 
-        console.log({chainId})
-
         const VRFCoordinatorV2MockFactory = await ethers.getContractFactory(
             "VRFCoordinatorV2Mock"
         )

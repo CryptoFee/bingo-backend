@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const destDir = path.join(__dirname, '..', '..', 'frontend', 'src' , 'web3', 'constants.ts');
+const destDir = path.join(__dirname, '..', '..', 'bingo-frontend', 'src' , 'web3', 'constants.ts');
 
 export const replaceConstantsValue = (variableName : string, value : string) => {
 
@@ -18,7 +18,7 @@ export const replaceConstantsValue = (variableName : string, value : string) => 
 export const replaceAbi = (contractName : string) => {
 
     const sourceFile = path.join(__dirname, '..', 'artifacts', 'contracts', `${contractName}.sol`, `${contractName}.json`);
-    const destDir = path.join(__dirname, '..', '..', 'frontend', 'src' , 'abi');
+    const destDir = path.join(__dirname, '..', '..', 'bingo-frontend', 'src' , 'web3', 'abi');
     const destFile = path.join(destDir, `${contractName}.json`);
 
     fs.copyFileSync(sourceFile, destFile)

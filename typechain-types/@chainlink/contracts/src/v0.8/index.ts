@@ -6,4 +6,3 @@ export type { interfaces };
 export type { ConfirmedOwner } from "./ConfirmedOwner";
 export type { ConfirmedOwnerWithProposal } from "./ConfirmedOwnerWithProposal";
 export type { VRFConsumerBaseV2 } from "./VRFConsumerBaseV2";
-export type { VRFV2WrapperConsumerBase } from "./VRFV2WrapperConsumerBase";

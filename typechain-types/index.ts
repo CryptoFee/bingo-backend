@@ -18,12 +18,8 @@ export type { OwnableInterface } from "./@chainlink/contracts/src/v0.8/interface
 export { OwnableInterface__factory } from "./factories/@chainlink/contracts/src/v0.8/interfaces/OwnableInterface__factory";
 export type { VRFCoordinatorV2Interface } from "./@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface";
 export { VRFCoordinatorV2Interface__factory } from "./factories/@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface__factory";
-export type { VRFV2WrapperInterface } from "./@chainlink/contracts/src/v0.8/interfaces/VRFV2WrapperInterface";
-export { VRFV2WrapperInterface__factory } from "./factories/@chainlink/contracts/src/v0.8/interfaces/VRFV2WrapperInterface__factory";
 export type { VRFConsumerBaseV2 } from "./@chainlink/contracts/src/v0.8/VRFConsumerBaseV2";
 export { VRFConsumerBaseV2__factory } from "./factories/@chainlink/contracts/src/v0.8/VRFConsumerBaseV2__factory";
-export type { VRFV2WrapperConsumerBase } from "./@chainlink/contracts/src/v0.8/VRFV2WrapperConsumerBase";
-export { VRFV2WrapperConsumerBase__factory } from "./factories/@chainlink/contracts/src/v0.8/VRFV2WrapperConsumerBase__factory";
 export type { ERC20 } from "./@openzeppelin/contracts/token/ERC20/ERC20";
 export { ERC20__factory } from "./factories/@openzeppelin/contracts/token/ERC20/ERC20__factory";
 export type { IERC20Metadata } from "./@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata";

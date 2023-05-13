@@ -1,31 +1,46 @@
-const {ethers} = require("hardhat");
-const fs = require('fs');
-const path = require('path');
+import hre from "hardhat";
+import {deployCoordinator} from "./deployCordinator";
+import {replaceAbi, replaceConstantsValue} from "./replace";
+import {transferUSDTToLottery} from "./transferUSDTToLottery";
 
-const sourceFile = path.join(__dirname, '..', 'artifacts', 'contracts', 'Lottery.sol', 'Lottery.json');
-const destDir = path.join(__dirname, '..', '..', 'frontend', 'src');
-const destFile = path.join(destDir, 'Lottery.json');
+export const keyHash = "0xd89b2bf150e3b9e13446986e571fb9cab24b13cea0a43ea20a6049a85cc807cc"
 
 async function main() {
 
-    // Compile the smart contract
-    const Lottery = await ethers.getContractFactory("Lottery");
-    console.log("Compiling Lottery...");
+    const [deployer] = await hre.ethers.getSigners()
 
-    // Deploy the smart contract
-    const lottery = await Lottery.deploy();
-    console.log("Deploying Lottery...");
+    const {VRFCoordinatorV2Mock, subId} = await deployCoordinator()
+    const MockUSDT = await hre.ethers.getContractFactory("USDT");
+    const mockUSDT = await MockUSDT.deploy();
+    await mockUSDT.deployed();
 
-    // Wait for the contract to be mined
+    replaceAbi(`USDT`)
+    replaceConstantsValue(`USDTContractAddress`, mockUSDT.address)
+
+    const Lottery = await hre.ethers.getContractFactory("Lottery");
+    const lottery = await Lottery.deploy(
+        mockUSDT.address,
+        100000 * 1000000,
+        [3,2,1],
+        subId,
+        VRFCoordinatorV2Mock.address,
+        keyHash
+    );
+
     await lottery.deployed();
 
-    console.log("Lottery deployed to:", lottery.address);
+    await VRFCoordinatorV2Mock.addConsumer(subId, lottery.address)
 
-    fs.copyFileSync(sourceFile, destFile)
-    console.log(`${sourceFile} was successfully copied to ${destFile}`);
+    console.log("USDTReceiver deployed to:", lottery.address);
+
+    replaceAbi(`Lottery`)
+    replaceConstantsValue(`MainContractAddress`, lottery.address)
+
+    await transferUSDTToLottery(mockUSDT, lottery, deployer, [100, 1000], 100)
+
+
 }
 
-// Run the deploy function
 main()
     .then(() => process.exit(0))
     .catch(error => {
