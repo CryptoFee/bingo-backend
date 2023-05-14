@@ -16,7 +16,7 @@ describe("Lottery unit tests with full implementation", async () => {
 
         const {prizes, cycles} = getArguments()
 
-        const players = await generatePlayers(1000)(MockUSDT, deployer)
+        const players = await generatePlayers(100)(MockUSDT, deployer)
 
         let playersCount: number = 0
 

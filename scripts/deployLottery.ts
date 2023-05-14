@@ -21,7 +21,7 @@ async function main() {
     const lottery = await Lottery.deploy(
         mockUSDT.address,
         100000 * 1000000,
-        [3,2,1],
+        [3, 2, 1].map(v => v * 1000000),
         subId,
         VRFCoordinatorV2Mock.address,
         keyHash

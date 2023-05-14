@@ -73,7 +73,7 @@ contract Lottery is VRFv2SubscriptionConsumer, NoEther, GasTracker {
 
     function buyLotteryTickets(address player, uint amount) external nonReentrant {
         require(isActive == true, "Winners are being calculated. Please wait");
-        require(usdtToken.transferFrom(player, address(this), amount), "USDT transfer failed.");
+        require(usdtToken.transferFrom(player, address(this),amount), "USDT transfer failed.");
 
         players.push(Player({
             playerAddress: player,

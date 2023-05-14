@@ -18,9 +18,6 @@
     "test:parallel": "npx hardhat test --parallel",
     "test:coverage": "npx hardhat coverage",
     "deploy:lottery": "npx hardhat run ./scripts/deployLottery.ts --network localhost --show-stack-traces",
-    "deploy:usdt": "npx hardhat run scripts/deployUSDT.ts --network localhost",
-    "deploy:usdt-receiver": "npx hardhat run scripts/deployUSDTReceiver.ts --network localhost",
-    "deploy:both-usdt-receiver": "npx hardhat run scripts/deployBothUSDTAndReceiver.ts --network localhost",
     "deploy:etherscan-verify": "npx hardhat verify --network mumbai 0xd8dc037740032BF8a37b38961488256BC19a34cB 0xFca133cA8947EA963218812D5BB18fa6B6F03244"
   }
 }
