@@ -54,7 +54,7 @@ abstract contract VRFv2SubscriptionConsumer is VRFConsumerBaseV2, ConfirmedOwner
     }
 
     // Assumes the subscription is funded sufficiently.
-    function requestRandomWords(uint32 numWords) internal onlyOwner returns (uint)    {
+    function requestRandomWords(uint32 numWords) internal returns (uint)    {
         // Will revert if subscription is not set and funded.
         uint requestId = COORDINATOR.requestRandomWords(
             hashKey,

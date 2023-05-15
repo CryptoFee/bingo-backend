@@ -32,6 +32,8 @@ export type { IERC20WithDecimal } from "./contracts/Lottery.sol/IERC20WithDecima
 export { IERC20WithDecimal__factory } from "./factories/contracts/Lottery.sol/IERC20WithDecimal__factory";
 export type { Lottery } from "./contracts/Lottery.sol/Lottery";
 export { Lottery__factory } from "./factories/contracts/Lottery.sol/Lottery__factory";
+export type { MaticToken } from "./contracts/MaticToken";
+export { MaticToken__factory } from "./factories/contracts/MaticToken__factory";
 export type { NoEther } from "./contracts/NoEther";
 export { NoEther__factory } from "./factories/contracts/NoEther__factory";
 export type { USDT } from "./contracts/USDT";

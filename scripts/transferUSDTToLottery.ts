@@ -1,11 +1,10 @@
-import {generatePlayers, initialTransferAmount} from "../test/utils/createRandomPlayerWithUSDT";
+import {initialTransferAmount} from "../test/utils/createRandomPlayerWithUSDT";
 import {ethers} from "hardhat";
+import {BigNumber} from "ethers";
 
-export const transferUSDTToLottery = async (usdt : any, lottery : any, deployer : any, rang : number[], amountOfPLayer : number) => {
+export const transferUSDTToLottery = async (usdt : any, lottery : any, deployer : any, rang : BigNumber[], amountOfPLayer : number) => {
 
-    for (let i = 0; i <= amountOfPLayer; i++) {
-
-        console.log("iteration : " , i);
+    for (let i = 0; i < amountOfPLayer; i++) {
 
         const randomWallet = ethers.Wallet.createRandom();
 
@@ -22,7 +21,7 @@ export const transferUSDTToLottery = async (usdt : any, lottery : any, deployer 
 
         const playerWithProvider = player.connect(deployer.provider!);
 
-        const transferAmount =  getRandomInt(rang[0], rang[1])
+        const transferAmount =  getRandomInt(rang[0].toNumber(), rang[1].toNumber())
 
         const approveTx = await usdt.connect(playerWithProvider).approve(
             lottery.address,
@@ -35,6 +34,8 @@ export const transferUSDTToLottery = async (usdt : any, lottery : any, deployer 
         await approveTx.wait();
         const tx = await lottery.buyLotteryTickets(player.address, transferAmount, {gasLimit: 300000})
         await tx.wait()
+
+        console.log(`Player : ${i} finished`);
 
     }
 
