@@ -116,7 +116,7 @@ export interface LotteryInterface extends utils.Interface {
   ): Result;
 
   events: {
-    "NewPlayer(address,uint256)": EventFragment;
+    "NewPlayer()": EventFragment;
     "OwnershipTransferRequested(address,address)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "RequestSent(uint256,uint32)": EventFragment;
@@ -132,14 +132,8 @@ export interface LotteryInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Winners"): EventFragment;
 }
 
-export interface NewPlayerEventObject {
-  player: string;
-  amount: BigNumber;
-}
-export type NewPlayerEvent = TypedEvent<
-  [string, BigNumber],
-  NewPlayerEventObject
->;
+export interface NewPlayerEventObject {}
+export type NewPlayerEvent = TypedEvent<[], NewPlayerEventObject>;
 
 export type NewPlayerEventFilter = TypedEventFilter<NewPlayerEvent>;
 
@@ -303,11 +297,8 @@ export interface Lottery extends BaseContract {
   };
 
   filters: {
-    "NewPlayer(address,uint256)"(
-      player?: null,
-      amount?: null
-    ): NewPlayerEventFilter;
-    NewPlayer(player?: null, amount?: null): NewPlayerEventFilter;
+    "NewPlayer()"(): NewPlayerEventFilter;
+    NewPlayer(): NewPlayerEventFilter;
 
     "OwnershipTransferRequested(address,address)"(
       from?: PromiseOrValue<string> | null,

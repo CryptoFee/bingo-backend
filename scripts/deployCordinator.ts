@@ -1,4 +1,5 @@
 import hre, {ethers} from "hardhat";
+import {replaceAbi, replaceConstantsValue} from "./replace";
 
 export const deployCoordinator = async () => {
     const BASE_FEE = "10000"
@@ -18,6 +19,11 @@ export const deployCoordinator = async () => {
     const transactionReceipt = await transaction.wait(1)
     const subscriptionId = ethers.BigNumber.from(transactionReceipt?.events?.[0].topics[1])
     await VRFCoordinatorV2Mock.fundSubscription(subscriptionId, fundAmount)
+
+    console.log("VRFCoordinatorV2Mock address is ", VRFCoordinatorV2Mock.address)
+
+    replaceAbi(`VRFCoordinatorV2Mock`)
+    replaceConstantsValue(`VRFCoordinatorV2MockAddress`, VRFCoordinatorV2Mock.address)
 
     return {
         VRFCoordinatorV2Mock : VRFCoordinatorV2Mock,
