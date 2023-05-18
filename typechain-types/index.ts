@@ -36,6 +36,8 @@ export type { MaticToken } from "./contracts/MaticToken";
 export { MaticToken__factory } from "./factories/contracts/MaticToken__factory";
 export type { NoEther } from "./contracts/NoEther";
 export { NoEther__factory } from "./factories/contracts/NoEther__factory";
+export type { TestArray } from "./contracts/TestArray";
+export { TestArray__factory } from "./factories/contracts/TestArray__factory";
 export type { USDT } from "./contracts/USDT";
 export { USDT__factory } from "./factories/contracts/USDT__factory";
 export type { VRFCoordinatorV2Mock } from "./contracts/VRFCoordinatorV2Mock";

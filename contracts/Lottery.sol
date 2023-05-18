@@ -21,7 +21,7 @@ contract Lottery is VRFv2SubscriptionConsumer, NoEther, GasTracker {
     bool private lock;
     bool private isActive = true;
     uint private lastPlayerMax = 0;
-    uint private cycle = 1;
+    uint32 private cycle = 1;
 
     struct LuckyPlayer {
         address playerAddress;
@@ -34,12 +34,11 @@ contract Lottery is VRFv2SubscriptionConsumer, NoEther, GasTracker {
         uint end;
     }
 
-    mapping(uint => Player[]) private players;
+    mapping(uint32 => Player[]) public players;
 
     event NewPlayer();
     event ResetGame();
     event Winners(LuckyPlayer[]);
-
 
     modifier onlyLotteryOwner() {
         require(msg.sender == lotteryOwner, "Only the contract owner can perform this action");
@@ -67,8 +66,8 @@ contract Lottery is VRFv2SubscriptionConsumer, NoEther, GasTracker {
         maxAmount = _maxAmount;
     }
 
-    function getLotteryDetails() external onlyLotteryOwner view returns (bool, Player[] memory, uint[] memory, uint){
-        return (isActive, players[cycle], prizes, maxAmount);
+    function getLotteryDetails() external onlyLotteryOwner view returns (bool, Player[] memory, uint[] memory, uint, uint32){
+        return (isActive, players[cycle], prizes, maxAmount, cycle);
     }
 
     function buyLotteryTickets(address player, uint amount) external nonReentrant {
@@ -94,7 +93,7 @@ contract Lottery is VRFv2SubscriptionConsumer, NoEther, GasTracker {
     function resetGame() private {
         lastPlayerMax = 0;
         requestId = 0;
-        cycle += 1;
+        cycle++;
         isActive = true;
         emit ResetGame();
     }
@@ -107,8 +106,9 @@ contract Lottery is VRFv2SubscriptionConsumer, NoEther, GasTracker {
 
     function binarySearch(uint target) private view returns (address) {
         uint low = 0;
-        Player[] memory currentPlayers = players[cycle];
+        Player[] memory currentPlayers =  players[cycle];
         uint high = currentPlayers.length - 1;
+
         while (low <= high) {
             uint mid = (low + high + 1) / 2;
             if (target >= currentPlayers[mid].start && target <= currentPlayers[mid].end) {
@@ -137,8 +137,6 @@ contract Lottery is VRFv2SubscriptionConsumer, NoEther, GasTracker {
         }
 
         emit Winners(luckyPlayers);
-
-        delete players[cycle];
 
         uint256 contractBalance = usdtToken.balanceOf(address(this));
         require(usdtToken.transfer(lotteryOwner, contractBalance), "USDT transfer to owner failed.");

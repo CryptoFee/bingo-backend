@@ -14,11 +14,10 @@ describe("Lottery unit tests with full implementation", async () => {
             createRandomNumberConsumerFixtureDeploy()
         )
 
-        const {prizes, cycles} = getArguments()
+        const {prizes, cycles, maxAmount} = getArguments()
 
         const players = await generatePlayers(100)(MockUSDT, deployer)
-// 26549
-        const startGame = async (iteration: number, initialAmount : BigNumber) => {
+        const startGame = async (iteration: number, initialAmount: BigNumber) => {
 
             let playersCount: number = 0
 
@@ -57,44 +56,43 @@ describe("Lottery unit tests with full implementation", async () => {
                 prize: BigNumber;
             }
 
-          /*  await new Promise<void>(async (resolve, reject) => {
-                Lottery.on("Winners", async (winners: Winners[]) => {
+            /*    await new Promise<void>(async (resolve, reject) => {
+                    Lottery.on("Winners", async (winners: Winners[]) => {
 
-                    const combinedWinners = winners.reduce((acc, winner) => {
-                        const existingWinner = acc.find((w) => w.playerAddress === winner.playerAddress);
-                        if (existingWinner) {
-                            existingWinner.prize = existingWinner.prize.add(winner.prize)
-                        } else {
-                            acc.push({...winner});
-                        }
-                        return acc;
-                    }, [] as Winners[]);
+                        const combinedWinners = winners.reduce((acc, winner) => {
+                            const existingWinner = acc.find((w) => w.playerAddress === winner.playerAddress);
+                            if (existingWinner) {
+                                existingWinner.prize = existingWinner.prize.add(winner.prize)
+                            } else {
+                                acc.push({...winner});
+                            }
+                            return acc;
+                        }, [] as Winners[]);
 
-                    const winnersPromise = combinedWinners.map(async (winner) => {
-                        const playerBalance = await MockUSDT.balanceOf(winner.playerAddress);
+                        const winnersPromise = combinedWinners.map(async (winner) => {
+                            const playerBalance = await MockUSDT.balanceOf(winner.playerAddress);
 
-                        try {
-                            expect(playerBalance).to.equal(initialAmount.sub(transferAmount).add(winner.prize))
-                        } catch (e) {
-                            reject(e)
-                        }
+                            try {
+                                expect(playerBalance).to.equal(initialAmount.sub(transferAmount).add(winner.prize))
+                            } catch (e) {
+                                reject(e)
+                            }
+                        })
+                        await Promise.all(winnersPromise)
+                        resolve()
                     })
-                    await Promise.all(winnersPromise)
-                    resolve()
-                })
-            })*/
+                })*/
 
             const ownerBalance = await MockUSDT.balanceOf(deployer.address);
 
             expect(ownerBalance).to.equal(
-                (playersCount * transferAmount.toNumber())
-                - prizes.reduce((acc, prize) => acc + prize, 0)
+                (maxAmount * 10**6) - prizes.reduce((acc, prize) => acc + prize, 0)
                 + ownerInitialBalance.toNumber()
             )
         }
 
         for (let i = 1; i <= cycles; i++) {
-            await startGame(i, initialTransferAmount.sub(transferAmount.mul(i-1)))
+            await startGame(i, initialTransferAmount.sub(transferAmount.mul(i - 1)))
         }
     })
 })

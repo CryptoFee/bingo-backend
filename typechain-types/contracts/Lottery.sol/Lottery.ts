@@ -57,6 +57,7 @@ export interface LotteryInterface extends utils.Interface {
     "buyLotteryTickets(address,uint256)": FunctionFragment;
     "getLotteryDetails()": FunctionFragment;
     "owner()": FunctionFragment;
+    "players(uint32,uint256)": FunctionFragment;
     "rawFulfillRandomWords(uint256,uint256[])": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -67,6 +68,7 @@ export interface LotteryInterface extends utils.Interface {
       | "buyLotteryTickets"
       | "getLotteryDetails"
       | "owner"
+      | "players"
       | "rawFulfillRandomWords"
       | "transferOwnership"
   ): FunctionFragment;
@@ -84,6 +86,10 @@ export interface LotteryInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "players",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(
     functionFragment: "rawFulfillRandomWords",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>[]]
@@ -106,6 +112,7 @@ export interface LotteryInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "players", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "rawFulfillRandomWords",
     data: BytesLike
@@ -226,9 +233,23 @@ export interface Lottery extends BaseContract {
 
     getLotteryDetails(
       overrides?: CallOverrides
-    ): Promise<[boolean, Lottery.PlayerStructOutput[], BigNumber[], BigNumber]>;
+    ): Promise<
+      [boolean, Lottery.PlayerStructOutput[], BigNumber[], BigNumber, number]
+    >;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
+
+    players(
+      arg0: PromiseOrValue<BigNumberish>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<
+      [string, BigNumber, BigNumber] & {
+        playerAddress: string;
+        start: BigNumber;
+        end: BigNumber;
+      }
+    >;
 
     rawFulfillRandomWords(
       requestId: PromiseOrValue<BigNumberish>,
@@ -254,9 +275,23 @@ export interface Lottery extends BaseContract {
 
   getLotteryDetails(
     overrides?: CallOverrides
-  ): Promise<[boolean, Lottery.PlayerStructOutput[], BigNumber[], BigNumber]>;
+  ): Promise<
+    [boolean, Lottery.PlayerStructOutput[], BigNumber[], BigNumber, number]
+  >;
 
   owner(overrides?: CallOverrides): Promise<string>;
+
+  players(
+    arg0: PromiseOrValue<BigNumberish>,
+    arg1: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<
+    [string, BigNumber, BigNumber] & {
+      playerAddress: string;
+      start: BigNumber;
+      end: BigNumber;
+    }
+  >;
 
   rawFulfillRandomWords(
     requestId: PromiseOrValue<BigNumberish>,
@@ -280,9 +315,23 @@ export interface Lottery extends BaseContract {
 
     getLotteryDetails(
       overrides?: CallOverrides
-    ): Promise<[boolean, Lottery.PlayerStructOutput[], BigNumber[], BigNumber]>;
+    ): Promise<
+      [boolean, Lottery.PlayerStructOutput[], BigNumber[], BigNumber, number]
+    >;
 
     owner(overrides?: CallOverrides): Promise<string>;
+
+    players(
+      arg0: PromiseOrValue<BigNumberish>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<
+      [string, BigNumber, BigNumber] & {
+        playerAddress: string;
+        start: BigNumber;
+        end: BigNumber;
+      }
+    >;
 
     rawFulfillRandomWords(
       requestId: PromiseOrValue<BigNumberish>,
@@ -346,6 +395,12 @@ export interface Lottery extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
+    players(
+      arg0: PromiseOrValue<BigNumberish>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     rawFulfillRandomWords(
       requestId: PromiseOrValue<BigNumberish>,
       randomWords: PromiseOrValue<BigNumberish>[],
@@ -372,6 +427,12 @@ export interface Lottery extends BaseContract {
     getLotteryDetails(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    players(
+      arg0: PromiseOrValue<BigNumberish>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     rawFulfillRandomWords(
       requestId: PromiseOrValue<BigNumberish>,
