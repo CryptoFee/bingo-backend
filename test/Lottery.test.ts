@@ -4,7 +4,7 @@ import {dollar, getArguments} from "./utils/helpers";
 import {loadFixture} from "@nomicfoundation/hardhat-network-helpers"
 import {expect} from "chai"
 import {BigNumber} from "ethers";
-
+//1263750
 const transferAmount = dollar(10)
 
 describe("Lottery unit tests with full implementation", async () => {
@@ -48,7 +48,8 @@ describe("Lottery unit tests with full implementation", async () => {
 
             await VRFCoordinatorV2Mock.fulfillRandomWords(
                 iteration,
-                Lottery.address
+                Lottery.address,
+                //{gasLimit: 2500000}
             )
 
             interface Winners {
@@ -56,7 +57,7 @@ describe("Lottery unit tests with full implementation", async () => {
                 prize: BigNumber;
             }
 
-            /*    await new Promise<void>(async (resolve, reject) => {
+                await new Promise<void>(async (resolve, reject) => {
                     Lottery.on("Winners", async (winners: Winners[]) => {
 
                         const combinedWinners = winners.reduce((acc, winner) => {
@@ -81,7 +82,7 @@ describe("Lottery unit tests with full implementation", async () => {
                         await Promise.all(winnersPromise)
                         resolve()
                     })
-                })*/
+                })
 
             const ownerBalance = await MockUSDT.balanceOf(deployer.address);
 

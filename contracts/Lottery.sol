@@ -100,6 +100,8 @@ contract Lottery is VRFv2SubscriptionConsumer, NoEther, GasTracker {
             requestId = requestRandomWords(uint32(prizes.length));
             isActive = false;
         }
+
+        console.log(lastPlayerMax % maxAmount);
     }
 
     function resetGame() private {
@@ -118,14 +120,12 @@ contract Lottery is VRFv2SubscriptionConsumer, NoEther, GasTracker {
 
     function binarySearch(uint target) private view returns (address) {
         uint low = 0;
-        Player[] memory currentPlayers = players[cycle];
-        uint high = currentPlayers.length - 1;
-
+        uint high =  players[cycle].length - 1;
         while (low <= high) {
             uint mid = (low + high + 1) / 2;
-            if (target >= currentPlayers[mid].start && target <= currentPlayers[mid].end) {
-                return currentPlayers[mid].playerAddress;
-            } else if (target < currentPlayers[mid].start) {
+            if (target >=  players[cycle][mid].start && target <=  players[cycle][mid].end) {
+                return  players[cycle][mid].playerAddress;
+            } else if (target <  players[cycle][mid].start) {
                 high = mid - 1;
             } else {
                 low = mid + 1;
@@ -135,11 +135,11 @@ contract Lottery is VRFv2SubscriptionConsumer, NoEther, GasTracker {
         return lotteryOwner;
     }
 
-    function transferPrizesToWinners(uint256[] memory _randomWords) internal {
+    function transferPrizesToWinners(uint256[] memory _randomWords) private {
         LuckyPlayer[] memory luckyPlayers = new LuckyPlayer[](_randomWords.length);
 
         for (uint32 i = 0; i < _randomWords.length; i++) {
-            uint32 luckyNumber = uint32((_randomWords[i] % maxAmount) + 1);
+            uint32 luckyNumber = (_randomWords[i] % maxAmount) + 1;
             address luckyPlayer = binarySearch(luckyNumber);
             require(usdtToken.transfer(luckyPlayer, prizes[i]), "USDT transfer failed.");
             luckyPlayers[i] = LuckyPlayer({

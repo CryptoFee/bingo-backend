@@ -8,7 +8,7 @@ contract GasTracker {
 
     function startTracking(string memory tracker) internal {
         gasLimitMap[tracker] = gasleft();
-        console.log(tracker , "Gas limit: ", gasLimitMap[tracker]);
+        //console.log(tracker , "Gas limit: ", gasLimitMap[tracker]);
     }
 
     function printGasUsage(string memory tracker) internal view {
