@@ -22,6 +22,7 @@ contract Lottery is VRFv2SubscriptionConsumer, NoEther, GasTracker {
     bool private isActive = true;
     uint private lastPlayerMax = 0;
     uint32 private cycle = 1;
+    uint32 private cycleLimit;
 
     struct LuckyPlayer {
         address playerAddress;
@@ -52,9 +53,20 @@ contract Lottery is VRFv2SubscriptionConsumer, NoEther, GasTracker {
         lock = false;
     }
 
+    modifier nonCycleLimitExceed() {
+        require(cycle <= cycleLimit, "Cycle Limit Exceeded");
+        _;
+    }
+
+    modifier nonDisabled() {
+        require(isActive == true, "Lottery is not active");
+        _;
+    }
+
     constructor(
         address _usdtTokenAddress,
         uint _maxAmount,
+        uint8 _cycleLimit,
         uint[] memory _prizes,
         uint64 subscriptionId,
         address coordinator,
@@ -64,14 +76,14 @@ contract Lottery is VRFv2SubscriptionConsumer, NoEther, GasTracker {
         usdtToken = IERC20WithDecimal(_usdtTokenAddress);
         prizes = _prizes;
         maxAmount = _maxAmount;
+        cycleLimit = _cycleLimit;
     }
 
     function getLotteryDetails() external onlyLotteryOwner view returns (bool, Player[] memory, uint[] memory, uint, uint32){
         return (isActive, players[cycle], prizes, maxAmount, cycle);
     }
 
-    function buyLotteryTickets(address player, uint amount) external nonReentrant {
-        require(isActive == true, "Winners are being calculated. Please wait");
+    function buyLotteryTickets(address player, uint amount) external nonReentrant nonCycleLimitExceed nonDisabled {
         require(usdtToken.transferFrom(player, address(this), amount), "USDT transfer failed.");
 
         players[cycle].push(Player({
@@ -106,7 +118,7 @@ contract Lottery is VRFv2SubscriptionConsumer, NoEther, GasTracker {
 
     function binarySearch(uint target) private view returns (address) {
         uint low = 0;
-        Player[] memory currentPlayers =  players[cycle];
+        Player[] memory currentPlayers = players[cycle];
         uint high = currentPlayers.length - 1;
 
         while (low <= high) {

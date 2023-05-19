@@ -5,7 +5,7 @@ const {networkConfig} = require("../../hardhat.config.test")
 
 export const createRandomNumberConsumerFixtureDeploy = () => {
 
-    const {maxAmount, prizes} = getArguments()
+    const {maxAmount, prizes, cycles} = getArguments()
 
     return async function deployRandomNumberConsumerFixture() {
         const [deployer] = await ethers.getSigners()
@@ -46,6 +46,7 @@ export const createRandomNumberConsumerFixtureDeploy = () => {
             .deploy(
                 MockUSDT.address,
                 maxAmount * 1000000,
+                cycles,
                 prizes,
                 subscriptionId,
                 vrfCoordinatorAddress,

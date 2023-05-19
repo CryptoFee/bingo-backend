@@ -42,6 +42,7 @@ async function main() {
     const lottery = await Lottery.deploy(
         mockUSDT.address,
         dollar(1000),
+        1,
         [ dollar(3), dollar(2), dollar(1)],
         subId,
         VRFCoordinatorV2Mock.address,
