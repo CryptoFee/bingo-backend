@@ -49,10 +49,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC20__factory>;
     getContractFactory(
-      name: "Constants",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Constants__factory>;
-    getContractFactory(
       name: "IERC20WithDecimal",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC20WithDecimal__factory>;
@@ -60,10 +56,6 @@ declare module "hardhat/types/runtime" {
       name: "Lottery",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Lottery__factory>;
-    getContractFactory(
-      name: "MaticToken",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.MaticToken__factory>;
     getContractFactory(
       name: "NoEther",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -131,11 +123,6 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IERC20>;
     getContractAt(
-      name: "Constants",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Constants>;
-    getContractAt(
       name: "IERC20WithDecimal",
       address: string,
       signer?: ethers.Signer
@@ -145,11 +132,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Lottery>;
-    getContractAt(
-      name: "MaticToken",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.MaticToken>;
     getContractAt(
       name: "NoEther",
       address: string,

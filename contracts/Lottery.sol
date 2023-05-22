@@ -24,11 +24,6 @@ contract Lottery is VRFv2SubscriptionConsumer, NoEther, GasTracker {
     uint32 private cycle = 1;
     uint32 private cycleLimit;
 
-    struct LuckyPlayer {
-        address playerAddress;
-        uint prize;
-    }
-
     struct Player {
         address playerAddress;
         uint start;
@@ -38,8 +33,7 @@ contract Lottery is VRFv2SubscriptionConsumer, NoEther, GasTracker {
     mapping(uint32 => Player[]) public players;
 
     event NewPlayer();
-    event ResetGame();
-    event Winners(LuckyPlayer[]);
+    event Winners(uint256[]);
 
     modifier onlyLotteryOwner() {
         require(msg.sender == lotteryOwner, "Only the contract owner can perform this action");
@@ -107,7 +101,6 @@ contract Lottery is VRFv2SubscriptionConsumer, NoEther, GasTracker {
         requestId = 0;
         cycle++;
         isActive = true;
-        emit ResetGame();
     }
 
     function fulfillRandomWords(uint256 _requestId, uint256[] memory _randomWords) internal override {
@@ -134,19 +127,14 @@ contract Lottery is VRFv2SubscriptionConsumer, NoEther, GasTracker {
     }
 
     function transferPrizesToWinners(uint256[] memory _randomWords) private {
-        LuckyPlayer[] memory luckyPlayers = new LuckyPlayer[](_randomWords.length);
 
         for (uint32 i = 0; i < _randomWords.length; i++) {
             uint luckyNumber = (_randomWords[i] % maxAmount) + 1;
             address luckyPlayer = binarySearch(luckyNumber);
             require(usdtToken.transfer(luckyPlayer, prizes[i]), "USDT transfer failed.");
-            luckyPlayers[i] = LuckyPlayer({
-                playerAddress: luckyPlayer,
-                prize: prizes[i]
-            });
         }
 
-        emit Winners(luckyPlayers);
+        emit Winners(_randomWords);
 
         uint256 contractBalance = usdtToken.balanceOf(address(this));
         require(usdtToken.transfer(lotteryOwner, contractBalance), "USDT transfer to owner failed.");

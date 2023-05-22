@@ -28,16 +28,6 @@ import type {
 } from "../../common";
 
 export declare namespace Lottery {
-  export type LuckyPlayerStruct = {
-    playerAddress: PromiseOrValue<string>;
-    prize: PromiseOrValue<BigNumberish>;
-  };
-
-  export type LuckyPlayerStructOutput = [string, BigNumber] & {
-    playerAddress: string;
-    prize: BigNumber;
-  };
-
   export type PlayerStruct = {
     playerAddress: PromiseOrValue<string>;
     start: PromiseOrValue<BigNumberish>;
@@ -127,15 +117,13 @@ export interface LotteryInterface extends utils.Interface {
     "OwnershipTransferRequested(address,address)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "RequestSent(uint256,uint32)": EventFragment;
-    "ResetGame()": EventFragment;
-    "Winners(tuple[])": EventFragment;
+    "Winners(uint256[])": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "NewPlayer"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferRequested"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RequestSent"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ResetGame"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Winners"): EventFragment;
 }
 
@@ -179,18 +167,10 @@ export type RequestSentEvent = TypedEvent<
 
 export type RequestSentEventFilter = TypedEventFilter<RequestSentEvent>;
 
-export interface ResetGameEventObject {}
-export type ResetGameEvent = TypedEvent<[], ResetGameEventObject>;
-
-export type ResetGameEventFilter = TypedEventFilter<ResetGameEvent>;
-
 export interface WinnersEventObject {
-  arg0: Lottery.LuckyPlayerStructOutput[];
+  arg0: BigNumber[];
 }
-export type WinnersEvent = TypedEvent<
-  [Lottery.LuckyPlayerStructOutput[]],
-  WinnersEventObject
->;
+export type WinnersEvent = TypedEvent<[BigNumber[]], WinnersEventObject>;
 
 export type WinnersEventFilter = TypedEventFilter<WinnersEvent>;
 
@@ -373,10 +353,7 @@ export interface Lottery extends BaseContract {
     ): RequestSentEventFilter;
     RequestSent(requestId?: null, numWords?: null): RequestSentEventFilter;
 
-    "ResetGame()"(): ResetGameEventFilter;
-    ResetGame(): ResetGameEventFilter;
-
-    "Winners(tuple[])"(arg0?: null): WinnersEventFilter;
+    "Winners(uint256[])"(arg0?: null): WinnersEventFilter;
     Winners(arg0?: null): WinnersEventFilter;
   };
 

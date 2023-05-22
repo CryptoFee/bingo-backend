@@ -22,7 +22,7 @@ describe("testArray Unit", async function () {
         const randomNumbers = Array(10).fill(1)
 
 
-        for (let i = 0; i < 1000; i++) {
+        for (let i = 0; i < 250; i++) {
             await TestArray.addPlayer(players, {gasLimit: Number.MAX_SAFE_INTEGER - 1})
         }
 

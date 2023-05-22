@@ -28,16 +28,6 @@ import type {
 } from "../common";
 
 export declare namespace TestArray {
-  export type LuckyPlayerStruct = {
-    playerAddress: PromiseOrValue<string>;
-    prize: PromiseOrValue<BigNumberish>;
-  };
-
-  export type LuckyPlayerStructOutput = [string, BigNumber] & {
-    playerAddress: string;
-    prize: BigNumber;
-  };
-
   export type PlayerStruct = {
     playerAddress: PromiseOrValue<string>;
     start: PromiseOrValue<BigNumberish>;
@@ -77,19 +67,14 @@ export interface TestArrayInterface extends utils.Interface {
   ): Result;
 
   events: {
-    "Winners(tuple[])": EventFragment;
+    "Winners()": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Winners"): EventFragment;
 }
 
-export interface WinnersEventObject {
-  arg0: TestArray.LuckyPlayerStructOutput[];
-}
-export type WinnersEvent = TypedEvent<
-  [TestArray.LuckyPlayerStructOutput[]],
-  WinnersEventObject
->;
+export interface WinnersEventObject {}
+export type WinnersEvent = TypedEvent<[], WinnersEventObject>;
 
 export type WinnersEventFilter = TypedEventFilter<WinnersEvent>;
 
@@ -154,8 +139,8 @@ export interface TestArray extends BaseContract {
   };
 
   filters: {
-    "Winners(tuple[])"(arg0?: null): WinnersEventFilter;
-    Winners(arg0?: null): WinnersEventFilter;
+    "Winners()"(): WinnersEventFilter;
+    Winners(): WinnersEventFilter;
   };
 
   estimateGas: {

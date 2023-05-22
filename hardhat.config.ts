@@ -21,9 +21,9 @@ const config = {
     networks: {
         hardhat: {
             loggingEnabled: true,
-            blockGasLimit: Number.MAX_SAFE_INTEGER - 1,  // set a high block gas limit,
+          //  blockGasLimit: Number.MAX_SAFE_INTEGER - 1,  // set a high block gas limit,
             accounts: {
-                accountsBalance: "10000000000000000000000000000000000000" // 20000 ETH
+                accountsBalance: "10000000000000000000000000000000000000"
             }
         },
         mumbai: {

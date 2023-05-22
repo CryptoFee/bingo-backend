@@ -26,14 +26,10 @@ export type { IERC20Metadata } from "./@openzeppelin/contracts/token/ERC20/exten
 export { IERC20Metadata__factory } from "./factories/@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata__factory";
 export type { IERC20 } from "./@openzeppelin/contracts/token/ERC20/IERC20";
 export { IERC20__factory } from "./factories/@openzeppelin/contracts/token/ERC20/IERC20__factory";
-export type { Constants } from "./contracts/Constants";
-export { Constants__factory } from "./factories/contracts/Constants__factory";
 export type { IERC20WithDecimal } from "./contracts/Lottery.sol/IERC20WithDecimal";
 export { IERC20WithDecimal__factory } from "./factories/contracts/Lottery.sol/IERC20WithDecimal__factory";
 export type { Lottery } from "./contracts/Lottery.sol/Lottery";
 export { Lottery__factory } from "./factories/contracts/Lottery.sol/Lottery__factory";
-export type { MaticToken } from "./contracts/MaticToken";
-export { MaticToken__factory } from "./factories/contracts/MaticToken__factory";
 export type { NoEther } from "./contracts/NoEther";
 export { NoEther__factory } from "./factories/contracts/NoEther__factory";
 export type { TestArray } from "./contracts/TestArray";

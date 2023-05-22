@@ -2,8 +2,6 @@
 /* tslint:disable */
 /* eslint-disable */
 export * as lotterySol from "./Lottery.sol";
-export { Constants__factory } from "./Constants__factory";
-export { MaticToken__factory } from "./MaticToken__factory";
 export { NoEther__factory } from "./NoEther__factory";
 export { TestArray__factory } from "./TestArray__factory";
 export { USDT__factory } from "./USDT__factory";

@@ -15,14 +15,7 @@ contract TestArray is GasTracker {
         uint end;
     }
 
-    struct LuckyPlayer {
-        address playerAddress;
-        uint prize;
-    }
-
-    event Winners(LuckyPlayer[]);
-
-    uint private count = 0;
+    event Winners();
 
     mapping(uint => Player[]) private players;
 
@@ -33,18 +26,16 @@ contract TestArray is GasTracker {
         for (uint i = 0; i < playersData.length; i++) {
             players[cycle].push(playersData[i]);
         }
-        count += 1;
-        console.log(count);
     }
 
     function binarySearch(uint target) private view returns (address) {
         uint low = 0;
-        uint high =  players[cycle].length - 1;
+        uint high = players[cycle].length - 1;
         while (low <= high) {
             uint mid = (low + high + 1) / 2;
-            if (target >=  players[cycle][mid].start && target <=  players[cycle][mid].end) {
-                return  players[cycle][mid].playerAddress;
-            } else if (target <  players[cycle][mid].start) {
+            if (target >= players[cycle][mid].start && target <= players[cycle][mid].end) {
+                return players[cycle][mid].playerAddress;
+            } else if (target < players[cycle][mid].start) {
                 high = mid - 1;
             } else {
                 low = mid + 1;
@@ -55,24 +46,14 @@ contract TestArray is GasTracker {
     }
 
 
-
     function receivePlayersAndPickWinner(uint256[] calldata _randomWords) public {
 
-        LuckyPlayer[] memory luckyPlayers = new LuckyPlayer[](_randomWords.length);
-
         for (uint32 i = 0; i < _randomWords.length; i++) {
-
             uint luckyNumber = (_randomWords[i] % maxAmount) + 1;
-
-            address luckyPlayer = binarySearch(luckyNumber);
-
-            luckyPlayers[i] = LuckyPlayer({
-                playerAddress: luckyPlayer,
-                prize: 10000
-            });
+            address luckyPlayer = binarySearch((_randomWords[i] % maxAmount) + 1);
         }
 
-       emit Winners(luckyPlayers);
+        emit Winners();
 
     }
 }

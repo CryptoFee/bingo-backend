@@ -19,7 +19,7 @@
     "test:coverage": "npx hardhat coverage",
     "deploy:lottery": "npx hardhat run ./scripts/deployLottery.ts --network localhost --show-stack-traces",
     "deploy:test-array": "npx hardhat run ./scripts/deployTestArray.ts --network localhost --show-stack-traces",
-    "test:test-array": "REPORT_GAS=true node --max-old-space-size=12000 ./node_modules/.bin/hardhat test test/TestArray.test.ts",
+    "test:test-array": "REPORT_GAS=true node --max-old-space-size=14000 ./node_modules/.bin/hardhat test test/TestArray.test.ts",
     "deploy:etherscan-verify": "npx hardhat verify --network mumbai 0xd8dc037740032BF8a37b38961488256BC19a34cB 0xFca133cA8947EA963218812D5BB18fa6B6F03244"
   }
 }

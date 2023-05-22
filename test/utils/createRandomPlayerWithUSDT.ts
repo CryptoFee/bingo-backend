@@ -19,14 +19,14 @@ export const createRandomPlayerWithUSDT = async (mockUSDTContract: any, deployer
 }
 
 export const generatePlayers = (numb: number) => async (mockUSDTContract: any, deployer: any) => {
-    const [_, ...others] = await ethers.getSigners()
-    await Promise.all(others.map(async account => {
+    //const [_, ...others] = await ethers.getSigners()
+   /* await Promise.all(others.map(async account => {
 
         await account.sendTransaction({
             to: deployer.address,
             value:  ethers.utils.parseEther("500"),
         });
-    }))
+    }))*/
 
     return await Promise.all(
         Array(numb).fill(0).map(async () => await createRandomPlayerWithUSDT(mockUSDTContract, deployer))
