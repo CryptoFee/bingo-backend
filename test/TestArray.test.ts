@@ -12,15 +12,20 @@ describe("testArray Unit", async function () {
             .connect(deployer)
             .deploy()
 
-        for (let i = 0; i <= 2000; i++) {
-           await TestArray.addPlayer({
+        const players = Array(1000).fill(1).map((_, i) => ({
                 playerAddress: "0x6B9C4119796C80Ced5a3884027985Fd31830555b",
                 start: i,
                 end: i + 1
-            })
+            }
+        ))
+
+        const randomNumbers = Array(10).fill(1)
+
+
+        for (let i = 0; i < 1000; i++) {
+            await TestArray.addPlayer(players, {gasLimit: Number.MAX_SAFE_INTEGER - 1})
         }
 
-        await TestArray.deletePlayers()
-
+        await TestArray.receivePlayersAndPickWinner(randomNumbers, {gasLimit: Number.MAX_SAFE_INTEGER - 1})
     })
 })

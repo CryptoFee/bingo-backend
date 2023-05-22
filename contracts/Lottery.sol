@@ -100,8 +100,6 @@ contract Lottery is VRFv2SubscriptionConsumer, NoEther, GasTracker {
             requestId = requestRandomWords(uint32(prizes.length));
             isActive = false;
         }
-
-        console.log(lastPlayerMax % maxAmount);
     }
 
     function resetGame() private {
@@ -139,7 +137,7 @@ contract Lottery is VRFv2SubscriptionConsumer, NoEther, GasTracker {
         LuckyPlayer[] memory luckyPlayers = new LuckyPlayer[](_randomWords.length);
 
         for (uint32 i = 0; i < _randomWords.length; i++) {
-            uint32 luckyNumber = (_randomWords[i] % maxAmount) + 1;
+            uint luckyNumber = (_randomWords[i] % maxAmount) + 1;
             address luckyPlayer = binarySearch(luckyNumber);
             require(usdtToken.transfer(luckyPlayer, prizes[i]), "USDT transfer failed.");
             luckyPlayers[i] = LuckyPlayer({

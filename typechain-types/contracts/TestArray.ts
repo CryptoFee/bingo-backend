@@ -13,7 +13,11 @@ import type {
   Signer,
   utils,
 } from "ethers";
-import type { FunctionFragment, Result } from "@ethersproject/abi";
+import type {
+  FunctionFragment,
+  Result,
+  EventFragment,
+} from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
 import type {
   TypedEventFilter,
@@ -24,6 +28,16 @@ import type {
 } from "../common";
 
 export declare namespace TestArray {
+  export type LuckyPlayerStruct = {
+    playerAddress: PromiseOrValue<string>;
+    prize: PromiseOrValue<BigNumberish>;
+  };
+
+  export type LuckyPlayerStructOutput = [string, BigNumber] & {
+    playerAddress: string;
+    prize: BigNumber;
+  };
+
   export type PlayerStruct = {
     playerAddress: PromiseOrValue<string>;
     start: PromiseOrValue<BigNumberish>;
@@ -39,31 +53,45 @@ export declare namespace TestArray {
 
 export interface TestArrayInterface extends utils.Interface {
   functions: {
-    "addPlayer((address,uint256,uint256))": FunctionFragment;
-    "deletePlayers()": FunctionFragment;
+    "addPlayer((address,uint256,uint256)[])": FunctionFragment;
+    "receivePlayersAndPickWinner(uint256[])": FunctionFragment;
   };
 
   getFunction(
-    nameOrSignatureOrTopic: "addPlayer" | "deletePlayers"
+    nameOrSignatureOrTopic: "addPlayer" | "receivePlayersAndPickWinner"
   ): FunctionFragment;
 
   encodeFunctionData(
     functionFragment: "addPlayer",
-    values: [TestArray.PlayerStruct]
+    values: [TestArray.PlayerStruct[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "deletePlayers",
-    values?: undefined
+    functionFragment: "receivePlayersAndPickWinner",
+    values: [PromiseOrValue<BigNumberish>[]]
   ): string;
 
   decodeFunctionResult(functionFragment: "addPlayer", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "deletePlayers",
+    functionFragment: "receivePlayersAndPickWinner",
     data: BytesLike
   ): Result;
 
-  events: {};
+  events: {
+    "Winners(tuple[])": EventFragment;
+  };
+
+  getEvent(nameOrSignatureOrTopic: "Winners"): EventFragment;
 }
+
+export interface WinnersEventObject {
+  arg0: TestArray.LuckyPlayerStructOutput[];
+}
+export type WinnersEvent = TypedEvent<
+  [TestArray.LuckyPlayerStructOutput[]],
+  WinnersEventObject
+>;
+
+export type WinnersEventFilter = TypedEventFilter<WinnersEvent>;
 
 export interface TestArray extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -93,53 +121,63 @@ export interface TestArray extends BaseContract {
 
   functions: {
     addPlayer(
-      player: TestArray.PlayerStruct,
+      playersData: TestArray.PlayerStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    deletePlayers(
+    receivePlayersAndPickWinner(
+      _randomWords: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
   addPlayer(
-    player: TestArray.PlayerStruct,
+    playersData: TestArray.PlayerStruct[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  deletePlayers(
+  receivePlayersAndPickWinner(
+    _randomWords: PromiseOrValue<BigNumberish>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
     addPlayer(
-      player: TestArray.PlayerStruct,
+      playersData: TestArray.PlayerStruct[],
       overrides?: CallOverrides
     ): Promise<void>;
 
-    deletePlayers(overrides?: CallOverrides): Promise<void>;
+    receivePlayersAndPickWinner(
+      _randomWords: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<void>;
   };
 
-  filters: {};
+  filters: {
+    "Winners(tuple[])"(arg0?: null): WinnersEventFilter;
+    Winners(arg0?: null): WinnersEventFilter;
+  };
 
   estimateGas: {
     addPlayer(
-      player: TestArray.PlayerStruct,
+      playersData: TestArray.PlayerStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    deletePlayers(
+    receivePlayersAndPickWinner(
+      _randomWords: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     addPlayer(
-      player: TestArray.PlayerStruct,
+      playersData: TestArray.PlayerStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    deletePlayers(
+    receivePlayersAndPickWinner(
+      _randomWords: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
