@@ -45,28 +45,23 @@ describe("Lottery unit tests with full implementation", async () => {
                 }
             }
 
-            await VRFCoordinatorV2Mock.fulfillRandomWords(
-                iteration,
-                Lottery.address,
-                //{gasLimit: 2500000}
-            )
+            await VRFCoordinatorV2Mock.fulfillRandomWords(iteration, Lottery.address, {gasLimit: 2500000})
 
             interface Player {
                 playerAddress: string;
-                start: number;
-                end: number;
+                start: BigNumber;
+                end: BigNumber;
             }
 
             await new Promise<void>(async (resolve, reject) => {
-                Lottery.on("Winners", async (rndNumber: number[]) => {
+                Lottery.on("Winners", async (rndNumber: BigNumber[]) => {
 
                     try {
-                        const binarySearch = (target: number, mappedPLayers: Player[]) => {
+                        const binarySearch = (target: BigNumber, mappedPLayers: Player[]) => {
                             let low = 0;
                             let high = mappedPLayers.length - 1;
                             while (low <= high) {
-                                let mid = Math.round((low + high + 1) / 2);
-                                console.log("players" , mid, mappedPLayers, mappedPLayers[mid], mappedPLayers[mid].start)
+                                let mid = Math.round((low + high) / 2);
                                 if (target >= mappedPLayers[mid].start && target <= mappedPLayers[mid].end) {
                                     return mappedPLayers[mid].playerAddress;
                                 } else if (target < mappedPLayers[mid].start) {
@@ -80,15 +75,18 @@ describe("Lottery unit tests with full implementation", async () => {
                         }
 
                         for (let i = 0; i < rndNumber.length; i++) {
-                            const luckyNumber = (rndNumber[i] % 100) + 1;
+                            const luckyNumber = rndNumber[i].mod(100000000).add(1);
 
-                            const mappedData : Player[] = playersData.map((p: any) => {
-                                return {playerAddress:p["playerAddress"], start: p["start"].toNumber() / 1000000, end: p["end"].toNumber() / 1000000}
+                            const mappedData: Player[] = playersData.map((p: any) => {
+                                return {
+                                    playerAddress: p["playerAddress"],
+                                    start: p["start"],
+                                    end: p["end"]
+                                }
                             })
 
                             const luckyPlayer = binarySearch(luckyNumber, mappedData)
                             const playerBalance = await MockUSDT.balanceOf(luckyPlayer);
-
                             expect(playerBalance).to.equal(initialAmount.sub(transferAmount).add(prizes[i]))
 
                         }
@@ -96,7 +94,6 @@ describe("Lottery unit tests with full implementation", async () => {
                     } catch (e) {
                         reject(e)
                     }
-
 
                 })
             })

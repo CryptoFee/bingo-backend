@@ -111,12 +111,12 @@ contract Lottery is VRFv2SubscriptionConsumer, NoEther, GasTracker {
 
     function binarySearch(uint target) private view returns (address) {
         uint low = 0;
-        uint high =  players[cycle].length - 1;
+        uint high = players[cycle].length - 1;
         while (low <= high) {
             uint mid = (low + high + 1) / 2;
-            if (target >=  players[cycle][mid].start && target <=  players[cycle][mid].end) {
-                return  players[cycle][mid].playerAddress;
-            } else if (target <  players[cycle][mid].start) {
+            if (target >= players[cycle][mid].start && target <= players[cycle][mid].end) {
+                return players[cycle][mid].playerAddress;
+            } else if (target < players[cycle][mid].start) {
                 high = mid - 1;
             } else {
                 low = mid + 1;
