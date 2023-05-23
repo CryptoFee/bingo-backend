@@ -15,7 +15,7 @@ contract TestArray is GasTracker {
         uint end;
     }
 
-    event Winners();
+    event Winners(uint256[]);
 
     mapping(uint => Player[]) private players;
 
@@ -52,8 +52,9 @@ contract TestArray is GasTracker {
             uint luckyNumber = (_randomWords[i] % maxAmount) + 1;
             address luckyPlayer = binarySearch((_randomWords[i] % maxAmount) + 1);
         }
-
-        emit Winners();
+        uint256 contractBalance = address(this).balance;
+        console.log(contractBalance);
+        emit Winners(_randomWords);
 
     }
 }
