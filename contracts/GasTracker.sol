@@ -4,7 +4,7 @@ pragma solidity ^0.8.19;
 import "hardhat/console.sol";
 
 contract GasTracker {
-   mapping (string => uint ) gasLimitMap;
+   mapping (string => uint256) gasLimitMap;
 
     function startTracking(string memory tracker) internal {
         gasLimitMap[tracker] = gasleft();

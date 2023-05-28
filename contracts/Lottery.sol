@@ -12,19 +12,19 @@ import "./GasTracker.sol";
 contract Lottery is VRFv2SubscriptionConsumer, NoEther, GasTracker {
     IERC20 private usdtToken;
     address private immutable lotteryOwner;
-    uint private immutable maxAmount;
+    uint256 private immutable maxAmount;
     uint[] private prizes;
-    uint private requestId;
+    uint256 private requestId;
     bool private lock;
     bool private isActive = true;
-    uint private lastPlayerMax = 0;
+    uint256 private lastPlayerMax = 0;
     uint32 private cycle = 1;
     uint32 private cycleLimit;
 
     struct Player {
         address playerAddress;
-        uint start;
-        uint end;
+        uint256 start;
+        uint256 end;
     }
 
     mapping(uint32 => Player[]) public players;
@@ -56,7 +56,7 @@ contract Lottery is VRFv2SubscriptionConsumer, NoEther, GasTracker {
 
     constructor(
         address _usdtTokenAddress,
-        uint _maxAmount,
+        uint256 _maxAmount,
         uint8 _cycleLimit,
         uint[] memory _prizes,
         uint64 subscriptionId,
@@ -74,7 +74,7 @@ contract Lottery is VRFv2SubscriptionConsumer, NoEther, GasTracker {
         return (isActive, players[cycle], prizes, maxAmount, cycle);
     }
 
-    function buyLotteryTickets(address player, uint amount) external nonReentrant nonCycleLimitExceed nonDisabled {
+    function buyLotteryTickets(address player, uint256 amount) external nonReentrant nonCycleLimitExceed nonDisabled {
         require(usdtToken.transferFrom(player, address(this), amount), "USDT transfer failed.");
 
         players[cycle].push(Player({
@@ -106,11 +106,11 @@ contract Lottery is VRFv2SubscriptionConsumer, NoEther, GasTracker {
         resetGame();
     }
 
-    function binarySearch(uint target) private view returns (address) {
-        uint low = 0;
-        uint high = players[cycle].length - 1;
+    function binarySearch(uint256 target) private view returns (address) {
+        uint256 low = 0;
+        uint256 high = players[cycle].length - 1;
         while (low <= high) {
-            uint mid = (low + high + 1) / 2;
+            uint256 mid = (low + high + 1) / 2;
             if (target >= players[cycle][mid].start && target <= players[cycle][mid].end) {
                 return players[cycle][mid].playerAddress;
             } else if (target < players[cycle][mid].start) {
@@ -126,7 +126,7 @@ contract Lottery is VRFv2SubscriptionConsumer, NoEther, GasTracker {
     function transferPrizesToWinners(uint256[] memory _randomWords) private {
 
         for (uint32 i = 0; i < _randomWords.length; i++) {
-            uint luckyNumber = (_randomWords[i] % maxAmount) + 1;
+            uint256 luckyNumber = (_randomWords[i] % maxAmount) + 1;
             address luckyPlayer = binarySearch(luckyNumber);
             require(usdtToken.transfer(luckyPlayer, prizes[i]), "USDT transfer failed.");
         }
