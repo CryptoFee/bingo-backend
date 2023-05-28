@@ -8,12 +8,9 @@ import "./NoEther.sol";
 import "hardhat/console.sol";
 import "./GasTracker.sol";
 
-interface IERC20WithDecimal is IERC20 {
-    function decimals() external view returns (uint8);
-}
 
 contract Lottery is VRFv2SubscriptionConsumer, NoEther, GasTracker {
-    IERC20WithDecimal private usdtToken;
+    IERC20 private usdtToken;
     address private immutable lotteryOwner;
     uint private immutable maxAmount;
     uint[] private prizes;
@@ -67,7 +64,7 @@ contract Lottery is VRFv2SubscriptionConsumer, NoEther, GasTracker {
         bytes32 keyHash
     ) VRFv2SubscriptionConsumer(subscriptionId, coordinator, keyHash) {
         lotteryOwner = msg.sender;
-        usdtToken = IERC20WithDecimal(_usdtTokenAddress);
+        usdtToken = IERC20(_usdtTokenAddress);
         prizes = _prizes;
         maxAmount = _maxAmount;
         cycleLimit = _cycleLimit;
