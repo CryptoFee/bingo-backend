@@ -4,6 +4,7 @@
     "@nomiclabs/hardhat-ethers": "^2.2.3",
     "@nomiclabs/hardhat-etherscan": "^3.1.7",
     "@openzeppelin/contracts": "^4.8.3",
+    "axios": "^1.4.0",
     "chai": "^4.3.7",
     "dotenv": "^16.0.3",
     "hardhat": "^2.13.1"
@@ -17,6 +18,8 @@
     "test:1000": "MAX_PLAYERS=1000 REPORT_GAS=true npx hardhat test test/Lottery.test.ts",
     "test:parallel": "npx hardhat test --parallel",
     "test:coverage": "npx hardhat coverage",
+    "deploy:mock-coordinator": "npx hardhat run ./scripts/deployCoordinator.ts --network localhost --show-stack-traces",
+    "deploy:USDT": "npx hardhat run ./scripts/deployUSDT.ts --network localhost --show-stack-traces",
     "deploy:lottery": "npx hardhat run ./scripts/deployLottery.ts --network localhost --show-stack-traces",
     "deploy:test-array": "npx hardhat run ./scripts/deployTestArray.ts --network localhost --show-stack-traces",
     "test:test-array": "REPORT_GAS=true node --max-old-space-size=14000 ./node_modules/.bin/hardhat test test/TestArray.test.ts",

@@ -45,7 +45,8 @@ export interface LotteryInterface extends utils.Interface {
   functions: {
     "acceptOwnership()": FunctionFragment;
     "buyLotteryTickets(address,uint256)": FunctionFragment;
-    "getLotteryDetails()": FunctionFragment;
+    "getCurrentCycle()": FunctionFragment;
+    "getLotteryDetails(uint32)": FunctionFragment;
     "owner()": FunctionFragment;
     "players(uint32,uint256)": FunctionFragment;
     "rawFulfillRandomWords(uint256,uint256[])": FunctionFragment;
@@ -56,6 +57,7 @@ export interface LotteryInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "acceptOwnership"
       | "buyLotteryTickets"
+      | "getCurrentCycle"
       | "getLotteryDetails"
       | "owner"
       | "players"
@@ -72,8 +74,12 @@ export interface LotteryInterface extends utils.Interface {
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "getLotteryDetails",
+    functionFragment: "getCurrentCycle",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getLotteryDetails",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -98,6 +104,10 @@ export interface LotteryInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getCurrentCycle",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getLotteryDetails",
     data: BytesLike
   ): Result;
@@ -117,7 +127,7 @@ export interface LotteryInterface extends utils.Interface {
     "OwnershipTransferRequested(address,address)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "RequestSent(uint256,uint32)": EventFragment;
-    "Winners(uint256[])": EventFragment;
+    "Winners(uint256[],uint32)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "NewPlayer"): EventFragment;
@@ -169,8 +179,12 @@ export type RequestSentEventFilter = TypedEventFilter<RequestSentEvent>;
 
 export interface WinnersEventObject {
   arg0: BigNumber[];
+  arg1: number;
 }
-export type WinnersEvent = TypedEvent<[BigNumber[]], WinnersEventObject>;
+export type WinnersEvent = TypedEvent<
+  [BigNumber[], number],
+  WinnersEventObject
+>;
 
 export type WinnersEventFilter = TypedEventFilter<WinnersEvent>;
 
@@ -211,11 +225,12 @@ export interface Lottery extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    getCurrentCycle(overrides?: CallOverrides): Promise<[number]>;
+
     getLotteryDetails(
+      cycleNumber: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<
-      [boolean, Lottery.PlayerStructOutput[], BigNumber[], BigNumber, number]
-    >;
+    ): Promise<[boolean, Lottery.PlayerStructOutput[], BigNumber[], BigNumber]>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
@@ -253,11 +268,12 @@ export interface Lottery extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  getCurrentCycle(overrides?: CallOverrides): Promise<number>;
+
   getLotteryDetails(
+    cycleNumber: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
-  ): Promise<
-    [boolean, Lottery.PlayerStructOutput[], BigNumber[], BigNumber, number]
-  >;
+  ): Promise<[boolean, Lottery.PlayerStructOutput[], BigNumber[], BigNumber]>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
@@ -293,11 +309,12 @@ export interface Lottery extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    getCurrentCycle(overrides?: CallOverrides): Promise<number>;
+
     getLotteryDetails(
+      cycleNumber: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<
-      [boolean, Lottery.PlayerStructOutput[], BigNumber[], BigNumber, number]
-    >;
+    ): Promise<[boolean, Lottery.PlayerStructOutput[], BigNumber[], BigNumber]>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -353,8 +370,8 @@ export interface Lottery extends BaseContract {
     ): RequestSentEventFilter;
     RequestSent(requestId?: null, numWords?: null): RequestSentEventFilter;
 
-    "Winners(uint256[])"(arg0?: null): WinnersEventFilter;
-    Winners(arg0?: null): WinnersEventFilter;
+    "Winners(uint256[],uint32)"(arg0?: null, arg1?: null): WinnersEventFilter;
+    Winners(arg0?: null, arg1?: null): WinnersEventFilter;
   };
 
   estimateGas: {
@@ -368,7 +385,12 @@ export interface Lottery extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    getLotteryDetails(overrides?: CallOverrides): Promise<BigNumber>;
+    getCurrentCycle(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getLotteryDetails(
+      cycleNumber: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -401,7 +423,12 @@ export interface Lottery extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    getLotteryDetails(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    getCurrentCycle(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getLotteryDetails(
+      cycleNumber: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

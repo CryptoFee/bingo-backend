@@ -17,7 +17,6 @@ describe("Lottery unit tests with full implementation", async () => {
         const {prizes, cycles, maxAmount} = getArguments()
 
         const players = await generatePlayers(10)(MockUSDT, deployer)
-        let playersData: any;
         const startGame = async (iteration: number, initialAmount: BigNumber) => {
 
             const ownerInitialBalance = await MockUSDT.balanceOf(deployer.address);
@@ -37,10 +36,9 @@ describe("Lottery unit tests with full implementation", async () => {
                 await approveTx.wait();
                 const tx = await Lottery.buyLotteryTickets(player.address, transferAmount, {gasLimit: 300000})
                 await tx.wait()
-                const [isActive, playersDataFromContract] = await Lottery.getLotteryDetails()
+                const [isActive] = await Lottery.getLotteryDetails(1)
 
                 if (!isActive) {
-                    playersData = playersDataFromContract
                     break;
                 }
             }
@@ -55,7 +53,7 @@ describe("Lottery unit tests with full implementation", async () => {
 
             await new Promise<void>(async (resolve, reject) => {
                 Lottery.on("Winners", async (rndNumber: BigNumber[]) => {
-
+                    const [_, playersData] = await Lottery.getLotteryDetails(1)
                     try {
                         const binarySearch = (target: BigNumber, mappedPLayers: Player[]) => {
                             let low = 0;

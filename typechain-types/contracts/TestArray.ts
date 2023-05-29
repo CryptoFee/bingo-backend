@@ -67,14 +67,16 @@ export interface TestArrayInterface extends utils.Interface {
   ): Result;
 
   events: {
-    "Winners()": EventFragment;
+    "Winners(uint256[])": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Winners"): EventFragment;
 }
 
-export interface WinnersEventObject {}
-export type WinnersEvent = TypedEvent<[], WinnersEventObject>;
+export interface WinnersEventObject {
+  arg0: BigNumber[];
+}
+export type WinnersEvent = TypedEvent<[BigNumber[]], WinnersEventObject>;
 
 export type WinnersEventFilter = TypedEventFilter<WinnersEvent>;
 
@@ -139,8 +141,8 @@ export interface TestArray extends BaseContract {
   };
 
   filters: {
-    "Winners()"(): WinnersEventFilter;
-    Winners(): WinnersEventFilter;
+    "Winners(uint256[])"(arg0?: null): WinnersEventFilter;
+    Winners(arg0?: null): WinnersEventFilter;
   };
 
   estimateGas: {

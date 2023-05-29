@@ -33,7 +33,7 @@ contract Lottery is VRFv2SubscriptionConsumer, NoEther, GasTracker {
     mapping(uint32 => Player[]) public players;
 
     event NewPlayer();
-    event Winners(uint256[]);
+    event Winners(uint256[], uint32);
 
     modifier onlyLotteryOwner() {
         require(msg.sender == lotteryOwner, "Only the contract owner can perform this action");
@@ -73,8 +73,12 @@ contract Lottery is VRFv2SubscriptionConsumer, NoEther, GasTracker {
         cycleLimit = _cycleLimit;
     }
 
-    function getLotteryDetails() external onlyLotteryOwner view returns (bool, Player[] memory, uint[] memory, uint, uint32){
-        return (isActive, players[cycle], prizes, maxAmount, cycle);
+    function getCurrentCycle() external onlyLotteryOwner view returns (uint32)  {
+        return cycle;
+    }
+
+    function getLotteryDetails(uint32 cycleNumber) external onlyLotteryOwner view returns (bool, Player[] memory, uint[] memory, uint){
+        return (isActive, players[cycleNumber], prizes, maxAmount);
     }
 
     function buyLotteryTickets(address player, uint amount) external nonReentrant nonCycleLimitExceed nonDisabled {
@@ -134,7 +138,7 @@ contract Lottery is VRFv2SubscriptionConsumer, NoEther, GasTracker {
             require(usdtToken.transfer(luckyPlayer, prizes[i]), "USDT transfer failed.");
         }
 
-        emit Winners(_randomWords);
+        emit Winners(_randomWords, cycle);
 
         uint256 contractBalance = usdtToken.balanceOf(address(this));
         require(usdtToken.transfer(lotteryOwner, contractBalance), "USDT transfer to owner failed.");

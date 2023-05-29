@@ -1,6 +1,7 @@
 import {initialTransferAmount} from "../test/utils/createRandomPlayerWithUSDT";
 import {ethers} from "hardhat";
 import {BigNumber} from "ethers";
+import {dollar} from "../test/utils/helpers";
 
 export const transferUSDTToLottery = async (usdt : any, lottery : any, deployer : any, rang : BigNumber[], amountOfPLayer : number) => {
 
@@ -8,7 +9,7 @@ export const transferUSDTToLottery = async (usdt : any, lottery : any, deployer 
 
         const randomWallet = ethers.Wallet.createRandom();
 
-        await usdt.connect(deployer).transfer(randomWallet.address,initialTransferAmount);
+        await usdt.connect(deployer).transfer(randomWallet.address,dollar(5000));
 
         const player = randomWallet
 
