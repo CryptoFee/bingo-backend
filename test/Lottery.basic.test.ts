@@ -31,7 +31,7 @@ describe("Lottery Unit Tests Basic", async function () {
         expect(allowance).to.equal(amountToApprove);
 
         const contractInitialBalance = await MockUSDT.balanceOf(Lottery.address);
-        await Lottery.buyTickets(player.address, amountToApprove)
+        await Lottery.buyTickets(amountToApprove)
 
         const contractBalance = await MockUSDT.balanceOf(Lottery.address);
         const playerBalance = await MockUSDT.balanceOf(player.address);
