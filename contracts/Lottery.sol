@@ -25,7 +25,7 @@ contract Lottery is VRFv2SubscriptionConsumer {
     mapping(uint256 => Player[]) private _players;
 
     struct Player {
-        address player;
+        address addr;
         uint256 start;
         uint256 end;
     }
@@ -83,7 +83,7 @@ contract Lottery is VRFv2SubscriptionConsumer {
         _usdt.safeTransferFrom(msg.sender, address(this), amount);
         _players[_currentCycle].push(
             Player({
-                player: msg.sender,
+                addr: msg.sender,
                 start: _lastPlayerMax,
                 end: newLastPlayerMax
             })
@@ -147,18 +147,18 @@ contract Lottery is VRFv2SubscriptionConsumer {
     }
 
     function _binarySearch(uint256 target) private view returns (address) {
+        Player[] storage players = _players[_currentCycle];
         uint256 low = 0;
-        uint256 high = _players[_currentCycle].length - 1;
+        uint256 high = players.length - 1;
 
         while (low <= high) {
-            uint256 mid = (low + high + 1) / 2;
+            uint256 mid = low + (high - low) / 2;
+            Player storage player = players[mid];
 
-            if (
-                target >= _players[_currentCycle][mid].start &&
-                target <= _players[_currentCycle][mid].end
-            ) {
-                return _players[_currentCycle][mid].player;
-            } else if (target < _players[_currentCycle][mid].start) {
+            if (target >= player.start && target <= player.end) {
+                return player.addr;
+            } else if (target < player.start) {
+                if (mid == 0) break;
                 high = mid - 1;
             } else {
                 low = mid + 1;
