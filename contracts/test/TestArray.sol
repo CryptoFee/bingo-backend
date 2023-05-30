@@ -50,7 +50,7 @@ contract TestArray is GasTracker {
 
         for (uint32 i = 0; i < _randomWords.length; i++) {
             uint256 luckyNumber = (_randomWords[i] % maxAmount) + 1;
-            address luckyPlayer = binarySearch((_randomWords[i] % maxAmount) + 1);
+            address luckyPlayer = binarySearch(luckyNumber);
         }
         uint256 contractBalance = address(this).balance;
         console.log(contractBalance);

@@ -35,7 +35,7 @@ describe("Lottery unit tests with full implementation", async () => {
                 );
 
                 await approveTx.wait();
-                const tx = await Lottery.buyLotteryTickets(player.address, transferAmount, {gasLimit: 300000})
+                const tx = await Lottery.buyTickets(player.address, transferAmount, {gasLimit: 300000})
                 await tx.wait()
                 const [isActive, playersDataFromContract] = await Lottery.getLotteryDetails()
 
