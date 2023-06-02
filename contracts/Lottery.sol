@@ -81,13 +81,13 @@ contract Lottery is VRFv2SubscriptionConsumer {
         require(amount >= _MIN_DEPOSIT, "buyTickets: Amount is less from min deposit!");
 
         _usdt.safeTransferFrom(msg.sender, address(this), amount);
-        _players[_currentCycle].push(
-            Player({
+
+        uint256 len = _players[_currentCycle].length;
+        _players[_currentCycle][len] = Player({
                 addr: msg.sender,
                 start: _lastPlayerMax,
                 end: newLastPlayerMax
-            })
-        );
+        });
         _lastPlayerMax = newLastPlayerMax;
 
         emit NewPlayer(msg.sender, amount, _lastPlayerMax);
@@ -134,7 +134,8 @@ contract Lottery is VRFv2SubscriptionConsumer {
     }
 
     function _transferPrizesToWinners(uint256[] memory randomWords) private {
-        for (uint256 i = 0; i < randomWords.length; i++) {
+        uint256 len = randomWords.length;
+        for (uint256 i = 0; i < len; i++) {
             uint256 luckyNumber = (randomWords[i] % _maxAmount) + 1;
             address luckyPlayer = _binarySearch(luckyNumber);
             _usdt.safeTransfer(luckyPlayer, _prizes[i]);
