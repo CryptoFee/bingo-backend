@@ -1,7 +1,47 @@
-./idea
-.idea
+# Hardhat artifacts
+artifacts/
+
+# Compiled contracts and build outputs
+build/
+
+# Local Hardhat network state
+node_modules/
+
+# Hardhat cache
+.cache/
+cache/
+
+# Coverage reports
+coverage/
+
+# Editor and IDE files
+.vscode/
 .idea/
-./backend/node_modules
-/node_modules/
-artifacts
-cache
+*.sublime-workspace
+*.swp
+*.swo
+*.swn
+
+# Environment variables
+.env
+
+# Compiled JavaScript files
+*.js
+
+# Log files
+*.log
+
+# User-specific files
+*.log.*
+*.bak
+*.tmp
+
+# Dependency directories
+bower_components/
+
+# Build output of the project
+/dist/
+typechain-types/
+
+# Other project-specific files/directories to ignore
+# Add any additional files/directories specific to your project

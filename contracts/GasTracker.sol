@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import "hardhat/console.sol";
+import "hardhat/console.sol" as console;
 
 contract GasTracker {
-   mapping (string => uint ) gasLimitMap;
+   mapping (string => uint ) public gasLimitMap;
 
     function startTracking(string memory tracker) internal {
         gasLimitMap[tracker] = gasleft();
