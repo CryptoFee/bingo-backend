@@ -1,5 +1,4 @@
 import hre from "hardhat";
-import {deployCoordinator} from "./deployCordinator";
 import {getAbi, replaceAbi, replaceConstantsValue} from "./helpers/replace";
 import {transferUSDTToLottery} from "./transferUSDTToLottery";
 import {dollar} from "../test/utils/helpers";

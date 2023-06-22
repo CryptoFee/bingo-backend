@@ -3,124 +3,143 @@ pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "./VRFv2SubscriptionConsumer.sol";
-import "./NoEther.sol";
 import "hardhat/console.sol";
-import "./GasTracker.sol";
 
-interface IERC20WithDecimal is IERC20 {
-    function decimals() external view returns (uint8);
-}
+contract Lottery is VRFv2SubscriptionConsumer {
 
-contract Lottery is VRFv2SubscriptionConsumer, NoEther, GasTracker {
-    IERC20WithDecimal private usdtToken;
-    address private immutable lotteryOwner;
-    uint private immutable maxAmount;
-    uint[] private prizes;
-    uint private requestId;
-    bool private lock;
-    bool private isActive = true;
-    uint private lastPlayerMax = 0;
-    uint32 private cycle = 1;
-    uint32 private cycleLimit;
+    using SafeERC20 for IERC20;
+
+    uint256 private _currentCycle;
+    uint256 private _requestId;
+    uint256 private _lastPlayerMax;
+    uint256 private immutable _maxAmount;
+    uint256 private immutable _cycleLimit;
+    uint256 private constant _MIN_DEPOSIT = 10 * 6;
+
+    address public immutable lotteryOwner;
+    IERC20 private immutable _usdt;
+
+    bool private _isActive;
+
+    uint256[] private _prizes;
+    mapping(uint256 => Player[]) private _players;
 
     struct Player {
-        address playerAddress;
-        uint start;
-        uint end;
+        address addr;
+        uint256 start;
+        uint256 end;
     }
 
-    mapping(uint32 => Player[]) public players;
+    event NewPlayer(address indexed player, uint256 amount, uint256 newLastPlayerMax);
+    event Winners(uint256[], uint256);
 
-    event NewPlayer();
-    event Winners(uint256[], uint32);
-
-    modifier onlyLotteryOwner() {
-        require(msg.sender == lotteryOwner, "Only the contract owner can perform this action");
-        _;
-    }
-
-    modifier nonReentrant() {
-        require(!lock, "Reentrant call.");
-        lock = true;
-        _;
-        lock = false;
-    }
-
-    modifier nonCycleLimitExceed() {
-        require(cycle <= cycleLimit, "Cycle Limit Exceeded");
-        _;
-    }
-
-    modifier nonDisabled() {
-        require(isActive == true, "Lottery is not active");
+    modifier isActive() {
+        require(_isActive == true, "Lottery is not active!");
         _;
     }
 
     constructor(
-        address _usdtTokenAddress,
-        uint _maxAmount,
-        uint8 _cycleLimit,
-        uint[] memory _prizes,
+        address usdtTokenAddress,
+        uint256 maxAmount,
+        uint8 cycleLimit,
+        uint256[] memory prizes,
         uint64 subscriptionId,
         address coordinator,
         bytes32 keyHash
     ) VRFv2SubscriptionConsumer(subscriptionId, coordinator, keyHash) {
+        require(usdtTokenAddress != address(0), "Lottery: Invalid USDT address!");
+        require(maxAmount != 0, "Lottery: Zero max amount!");
+        require(cycleLimit != 0, "Lottery: Zero cycle limit!");
+        require(prizes.length != 0, "Lottery: Empty prizes array!");
+
         lotteryOwner = msg.sender;
-        usdtToken = IERC20WithDecimal(_usdtTokenAddress);
-        prizes = _prizes;
-        maxAmount = _maxAmount;
-        cycleLimit = _cycleLimit;
+        _usdt = IERC20(usdtTokenAddress);
+        _prizes = prizes;
+        _maxAmount = maxAmount;
+        _cycleLimit = cycleLimit;
+
+        // Activate participation
+        _currentCycle++;
+        _isActive = true;
     }
 
-    function getCurrentCycle() external onlyLotteryOwner view returns (uint32)  {
-        return cycle;
-    }
+    function buyTickets(address addr, uint256 amount) external isActive {
+        uint256 newLastPlayerMax = _lastPlayerMax + amount;
+        require(newLastPlayerMax <= _maxAmount, "buyTickets: Amount exceeds the limit!");
+        require(amount >= _MIN_DEPOSIT, "buyTickets: Amount is less from min deposit!");
 
-    function getLotteryDetails(uint32 cycleNumber) external onlyLotteryOwner view returns (bool, Player[] memory, uint[] memory, uint){
-        return (isActive, players[cycleNumber], prizes, maxAmount);
-    }
+        _usdt.safeTransferFrom(addr, address(this), amount);
 
-    function buyLotteryTickets(address player, uint amount) external nonReentrant nonCycleLimitExceed nonDisabled {
-        require(usdtToken.transferFrom(player, address(this), amount), "USDT transfer failed.");
-
-        players[cycle].push(Player({
-            playerAddress: player,
-            start: lastPlayerMax,
-            end: lastPlayerMax + amount
+        uint256 len = _players[_currentCycle].length;
+        _players[_currentCycle].push(Player({
+            addr: addr,
+            start: _lastPlayerMax,
+            end: newLastPlayerMax
         }));
+        _lastPlayerMax = newLastPlayerMax;
 
-        lastPlayerMax += amount;
+        emit NewPlayer(addr, amount, _lastPlayerMax);
 
-        emit NewPlayer();
-
-        if (lastPlayerMax >= maxAmount) {
-            requestId = requestRandomWords(uint32(prizes.length));
-            isActive = false;
+        if (_lastPlayerMax == _maxAmount) {
+            _requestId = requestRandomWords(uint32(_prizes.length));
+            _isActive = false;
         }
     }
 
-    function resetGame() private {
-        lastPlayerMax = 0;
-        requestId = 0;
-        cycle++;
-        isActive = true;
+    function getCurrentCycle() external view returns (uint256)  {
+        return _currentCycle;
     }
 
-    function fulfillRandomWords(uint256 _requestId, uint256[] memory _randomWords) internal override {
-        require(requestId == _requestId, "request not found!");
-        transferPrizesToWinners(_randomWords);
-        resetGame();
+    function getLotteryDetails(uint32 cycleNumber) external view returns (
+        bool,
+        Player[] memory,
+        uint[] memory,
+        uint
+    ){
+        return (
+            _isActive,
+            _players[cycleNumber],
+            _prizes,
+            _maxAmount
+        );
     }
 
-    function binarySearch(uint target) private view returns (address) {
-        uint low = 0;
-        uint high = players[cycle].length - 1;
+    function fulfillRandomWords(uint256 requestId, uint256[] memory randomWords) internal override {
+        require(_requestId == requestId, "fulfillRandomWords: Request IDs not match!");
+
+        _transferPrizesToWinners(randomWords);
+        _resetGame();
+    }
+
+    function _transferPrizesToWinners(uint256[] memory randomWords) private {
+        uint256 len = randomWords.length;
+        for (uint256 i = 0; i < len; i++) {
+            uint256 luckyNumber = (randomWords[i] % _maxAmount) + 1;
+            address luckyPlayer = _binarySearch(luckyNumber);
+            _usdt.safeTransfer(luckyPlayer, _prizes[i]);
+        }
+
+        emit Winners(randomWords, _currentCycle);
+
+        uint256 contractBalance = _usdt.balanceOf(address(this));
+        _usdt.safeTransfer(lotteryOwner, contractBalance);
+    }
+
+    function _binarySearch(uint256 target) private view returns (address) {
+        Player[] storage players = _players[_currentCycle];
+        uint256 low = 0;
+        uint256 high = players.length - 1;
+
         while (low <= high) {
-            uint mid = (low + high + 1) / 2;
-            if (target >= players[cycle][mid].start && target <= players[cycle][mid].end) {
-                return players[cycle][mid].playerAddress;
-            } else if (target < players[cycle][mid].start) {
+            uint256 mid = low + (high - low) / 2;
+            Player storage player = players[mid];
+
+            if (target >= player.start && target <= player.end) {
+                return player.addr;
+            } else if (target < player.start) {
+                if (mid == 0) break;
                 high = mid - 1;
             } else {
                 low = mid + 1;
@@ -130,17 +149,11 @@ contract Lottery is VRFv2SubscriptionConsumer, NoEther, GasTracker {
         return lotteryOwner;
     }
 
-    function transferPrizesToWinners(uint256[] memory _randomWords) private {
-
-        for (uint32 i = 0; i < _randomWords.length; i++) {
-            uint luckyNumber = (_randomWords[i] % maxAmount) + 1;
-            address luckyPlayer = binarySearch(luckyNumber);
-            require(usdtToken.transfer(luckyPlayer, prizes[i]), "USDT transfer failed.");
-        }
-
-        emit Winners(_randomWords, cycle);
-
-        uint256 contractBalance = usdtToken.balanceOf(address(this));
-        require(usdtToken.transfer(lotteryOwner, contractBalance), "USDT transfer to owner failed.");
+    function _resetGame() private {
+        _requestId = 0;
+        _lastPlayerMax = 0;
+        _currentCycle++;
+        _isActive = _currentCycle <= _cycleLimit;
     }
+
 }
