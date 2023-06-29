@@ -33,7 +33,7 @@ export const transferUSDTToLottery = async (usdt : any, lottery : any, deployer 
         );
 
         await approveTx.wait();
-        const tx = await lottery.buyLotteryTickets(player.address, transferAmount, {gasLimit: 300000})
+        const tx = await lottery.buyTickets(player.address, transferAmount, {gasLimit: 300000})
         await tx.wait()
 
         console.log(`Player : ${i} finished`);

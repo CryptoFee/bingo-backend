@@ -19,3 +19,16 @@ export const getAccessToken = async () => {
 
     return accessToken
 }
+
+
+export const createUser = async () => {
+
+    const client = getHttpClient()
+
+    const {data : {accessToken}} = await client.post('/users' , {
+        email : "admin@admin.com",
+        password : "123456",
+    })
+
+    return accessToken
+}

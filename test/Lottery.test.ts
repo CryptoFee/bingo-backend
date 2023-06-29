@@ -5,7 +5,7 @@ import {loadFixture} from "@nomicfoundation/hardhat-network-helpers"
 import {expect} from "chai"
 import {BigNumber} from "ethers";
 
-const transferAmount = dollar(5)
+const transferAmount = dollar(1)
 
 describe("Lottery unit tests with full implementation", async () => {
     it("Should successfully add multiple players with each 1$ And Check for winners balances", async () => {
@@ -16,7 +16,7 @@ describe("Lottery unit tests with full implementation", async () => {
 
         const {prizes, cycles, maxAmount} = getArguments()
 
-        const players = await generatePlayers(100)(MockUSDT, deployer)
+        const players = await generatePlayers(maxAmount)(MockUSDT, deployer)
         const startGame = async (iteration: number, initialAmount: BigNumber) => {
 
             const ownerInitialBalance = await MockUSDT.balanceOf(deployer.address);
@@ -82,8 +82,8 @@ describe("Lottery unit tests with full implementation", async () => {
                         })
 
                         for (let i = 0; i < rndNumber.length; i++) {
-                            const luckyNumber = rndNumber[i].mod(100000000).add(1);
-                            const luckyPlayer = binarySearch(luckyNumber, mappedData)
+                            const luckyNumber = rndNumber[i].mod(maxAmount * 1000000);
+                            const luckyPlayer = binarySearch(luckyNumber.add(1), mappedData)
                             const playerBalance = await MockUSDT.balanceOf(luckyPlayer);
                             expect(playerBalance).gt(initialAmount.sub(transferAmount))
                         }

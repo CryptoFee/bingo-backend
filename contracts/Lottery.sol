@@ -14,17 +14,14 @@ contract Lottery is VRFv2SubscriptionConsumer {
     uint256 private _currentCycle;
     uint256 private _requestId;
     uint256 private _lastPlayerMax;
-    uint256 private immutable _maxAmount;
-    uint256 private immutable _cycleLimit;
-    uint256 private constant _MIN_DEPOSIT = 10 * 6;
-
-    address public immutable lotteryOwner;
-    IERC20 private immutable _usdt;
-
     bool private _isActive;
-
     uint256[] private _prizes;
     mapping(uint256 => Player[]) private _players;
+    uint256 private immutable _maxAmount;
+    uint256 private immutable _cycleLimit;
+    address public immutable lotteryOwner;
+    IERC20 private immutable _usdt;
+    uint256 private constant _MIN_DEPOSIT = 10 * 6;
 
     struct Player {
         address addr;
