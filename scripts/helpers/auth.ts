@@ -2,7 +2,7 @@
 import axios from "axios"
 
 const instance = axios.create({
-    baseURL: 'http://localhost:3030',
+    baseURL: process.env.BACKEND_MASTER_URL
 });
 export const getHttpClient = () => {
     return instance
@@ -12,8 +12,8 @@ export const getAccessToken = async () => {
    const client = getHttpClient()
 
     const {data : {accessToken}} = await client.post('/authentication' , {
-        email : "admin@admin.com",
-        password : "123456",
+        email : process.env.ADMIN_USER_NAME,
+        password : process.env.ADMIN_PASSWORD,
         strategy : "local"
     })
 
@@ -26,8 +26,8 @@ export const createUser = async () => {
     const client = getHttpClient()
 
     const {data : {accessToken}} = await client.post('/users' , {
-        email : "admin@admin.com",
-        password : "123456",
+        email : process.env.ADMIN_USER_NAME,
+        password : process.env.ADMIN_PASSWORD,
     })
 
     return accessToken
