@@ -2,38 +2,39 @@ import {initialTransferAmount} from "../test/utils/createRandomPlayerWithUSDT";
 import {ethers} from "hardhat";
 import {BigNumber} from "ethers";
 import {dollar} from "../test/utils/helpers";
+import {getContract} from "./helpers/getContract";
 
-export const transferUSDTToLottery = async (usdt : any, lottery : any, deployer : any, rang : BigNumber[], amountOfPLayer : number) => {
+export const transferUSDTToLottery = async (usdt: any, lotteryAddress: any, deployer: any, rang: BigNumber[], amountOfPLayer: number) => {
 
     for (let i = 0; i < amountOfPLayer; i++) {
 
-        const randomWallet = ethers.Wallet.createRandom();
+        const randomWallet = await ethers.Wallet.createRandom();
 
-        await usdt.connect(deployer).transfer(randomWallet.address,dollar(5000));
-
-        const player = randomWallet
+        await usdt.connect(deployer).transfer(randomWallet.address, dollar(5000));
 
         const etherAmount = ethers.utils.parseEther("0.1"); // Convert 1 Ether to its smallest unit (10^18)
 
         await deployer.sendTransaction({
-            to: player.address,
+            to: randomWallet.address,
             value: etherAmount,
         });
 
-        const playerWithProvider = player.connect(deployer.provider!);
+        const playerWithProvider = randomWallet.connect(deployer.provider!);
+        //@ts-ignore
+        const lottery = await getContract("Lottery", lotteryAddress, playerWithProvider)
 
-        const transferAmount =  getRandomInt(rang[0].toNumber(), rang[1].toNumber())
+        const transferAmount = getRandomInt(rang[0].toNumber(), rang[1].toNumber())
 
         const approveTx = await usdt.connect(playerWithProvider).approve(
-            lottery.address,
+            lotteryAddress,
             transferAmount,
             {
-                from: player.address,
+                from: randomWallet.address,
             }
         );
 
         await approveTx.wait();
-        const tx = await lottery.buyTickets(player.address, transferAmount, {gasLimit: 300000})
+        const tx = await lottery.buyTickets(transferAmount, {gasLimit: 300000})
         await tx.wait()
 
         console.log(`Player : ${i} finished`);
@@ -42,7 +43,7 @@ export const transferUSDTToLottery = async (usdt : any, lottery : any, deployer 
 
 }
 
-function getRandomInt(min : number, max : number) {
+function getRandomInt(min: number, max: number) {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min;

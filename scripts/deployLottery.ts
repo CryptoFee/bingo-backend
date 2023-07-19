@@ -58,7 +58,7 @@ async function main() {
     replaceAbi(`Lottery`)
     replaceConstantsValue(`MainContractAddress`, lottery.address)
 
-    await transferUSDTToLottery(mockUSDT, lottery, deployer, [dollar(10), dollar(100)], 10)
+    await transferUSDTToLottery(mockUSDT, lottery.address, deployer, [dollar(10), dollar(100)], 10)
 
 }
 

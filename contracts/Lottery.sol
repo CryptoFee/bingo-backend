@@ -62,22 +62,20 @@ contract Lottery is VRFv2SubscriptionConsumer {
         _isActive = true;
     }
 
-    function buyTickets(address addr, uint256 amount) external isActive {
+    function buyTickets(uint256 amount) external isActive {
         uint256 newLastPlayerMax = _lastPlayerMax + amount;
         require(newLastPlayerMax <= _maxAmount, "buyTickets: Amount exceeds the limit!");
         require(amount >= _MIN_DEPOSIT, "buyTickets: Amount is less from min deposit!");
 
-        _usdt.safeTransferFrom(addr, address(this), amount);
-
-        uint256 len = _players[_currentCycle].length;
+        _usdt.safeTransferFrom(msg.sender, address(this), amount);
         _players[_currentCycle].push(Player({
-            addr: addr,
+            addr: msg.sender,
             start: _lastPlayerMax,
             end: newLastPlayerMax
         }));
         _lastPlayerMax = newLastPlayerMax;
 
-        emit NewPlayer(addr, amount, _lastPlayerMax);
+        emit NewPlayer(msg.sender, amount, _lastPlayerMax);
 
         if (_lastPlayerMax == _maxAmount) {
             _requestId = requestRandomWords(uint32(_prizes.length));
@@ -111,8 +109,7 @@ contract Lottery is VRFv2SubscriptionConsumer {
     }
 
     function _transferPrizesToWinners(uint256[] memory randomWords) private {
-        uint256 len = randomWords.length;
-        for (uint256 i = 0; i < len; i++) {
+        for (uint256 i = 0; i < randomWords.length; i++) {
             uint256 luckyNumber = (randomWords[i] % _maxAmount) + 1;
             address luckyPlayer = _binarySearch(luckyNumber);
             _usdt.safeTransfer(luckyPlayer, _prizes[i]);
