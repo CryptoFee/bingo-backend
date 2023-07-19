@@ -30,7 +30,7 @@ contract Lottery is VRFv2SubscriptionConsumer {
     }
 
     event NewPlayer(address indexed player, uint256 amount, uint256 newLastPlayerMax);
-    event Winners(uint256[], uint256);
+    event Winner(address indexed player, uint256 amount, uint256 cycle);
 
     modifier isActive() {
         require(_isActive == true, "Lottery is not active!");
@@ -110,12 +110,11 @@ contract Lottery is VRFv2SubscriptionConsumer {
 
     function _transferPrizesToWinners(uint256[] memory randomWords) private {
         for (uint256 i = 0; i < randomWords.length; i++) {
-            uint256 luckyNumber = (randomWords[i] % _maxAmount) + 1;
+            uint256 luckyNumber = (randomWords[i] % (_maxAmount / 10 ** 6 )) + 1;
             address luckyPlayer = _binarySearch(luckyNumber);
             _usdt.safeTransfer(luckyPlayer, _prizes[i]);
+            emit Winner(luckyPlayer, _prizes[i], _currentCycle);
         }
-
-        emit Winners(randomWords, _currentCycle);
 
         uint256 contractBalance = _usdt.balanceOf(address(this));
         _usdt.safeTransfer(lotteryOwner, contractBalance);
@@ -130,9 +129,9 @@ contract Lottery is VRFv2SubscriptionConsumer {
             uint256 mid = low + (high - low) / 2;
             Player storage player = players[mid];
 
-            if (target >= player.start && target <= player.end) {
+            if (target >= player.start / 10 ** 6 && target <= player.end / 10 ** 6) {
                 return player.addr;
-            } else if (target < player.start) {
+            } else if (target < player.start / 10 ** 6 ) {
                 if (mid == 0) break;
                 high = mid - 1;
             } else {

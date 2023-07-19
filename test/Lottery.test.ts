@@ -4,6 +4,7 @@ import {dollar, getArguments} from "./utils/helpers";
 import {loadFixture} from "@nomicfoundation/hardhat-network-helpers"
 import {expect} from "chai"
 import {BigNumber} from "ethers";
+import {getContract} from "../scripts/helpers/getContract";
 
 const transferAmount = dollar(1)
 
@@ -23,7 +24,11 @@ describe("Lottery unit tests with full implementation", async () => {
 
             for (let i = 0; i < players.length; i++) {
                 const player = players[i]
+
                 const playerWithProvider = player.connect(deployer.provider!);
+
+                // @ts-ignore
+                const lottery = await getContract("Lottery", Lottery.address, playerWithProvider)
 
                 const approveTx = await MockUSDT.connect(playerWithProvider).approve(
                     Lottery.address,
@@ -34,7 +39,7 @@ describe("Lottery unit tests with full implementation", async () => {
                 );
 
                 await approveTx.wait();
-                const tx = await Lottery.buyTickets(player.address, transferAmount, {gasLimit: 300000})
+                const tx = await lottery.buyTickets(transferAmount, {gasLimit: 300000})
                 await tx.wait()
                 const [isActive] = await Lottery.getLotteryDetails(1)
 
@@ -45,54 +50,16 @@ describe("Lottery unit tests with full implementation", async () => {
 
             await VRFCoordinatorV2Mock.fulfillRandomWords(iteration, Lottery.address, {gasLimit: 2500000})
 
-            interface Player {
-                playerAddress: string;
-                start: BigNumber;
-                end: BigNumber;
-            }
+            // @ts-ignore
+            const logs = await Lottery.queryFilter('Winner', 0, "latest")
 
-            await new Promise<void>(async (resolve, reject) => {
-                Lottery.on("Winners", async (rndNumber: BigNumber[]) => {
-
-                    const [_, playersData] = await Lottery.getLotteryDetails(1)
-                    try {
-                        const binarySearch = (target: BigNumber, mappedPlayers: Player[]) => {
-                            let low = 0;
-                            let high = mappedPlayers.length - 1;
-                            while (low <= high) {
-                                let mid = Math.round(low + (high - low) / 2);
-                                const player = mappedPlayers[mid]
-                                if (target.gte(player.start) && target.lte(player.end)) {
-                                    return player.playerAddress;
-                                } else if (target.lt(player.start)) {
-                                    high = mid - 1;
-                                } else {
-                                    low = mid + 1;
-                                }
-                            }
-                            return "";
-                        }
-
-                        const mappedData: Player[] = playersData.map((p: any) => {
-                            return {
-                                playerAddress: p["addr"],
-                                start: p["start"],
-                                end: p["end"]
-                            }
-                        })
-
-                        for (let i = 0; i < rndNumber.length; i++) {
-                            const luckyNumber = rndNumber[i].mod(maxAmount * 1000000);
-                            const luckyPlayer = binarySearch(luckyNumber.add(1), mappedData)
-                            const playerBalance = await MockUSDT.balanceOf(luckyPlayer);
-                            expect(playerBalance).gt(initialAmount.sub(transferAmount))
-                        }
-                        resolve()
-                    } catch (e) {
-                        reject(e)
-                    }
+            await Promise.all(
+                logs.map(async (event, index) => {
+                    const playerAddress = event.args['player']
+                    const playerBalance = await MockUSDT.balanceOf(playerAddress);
+                    expect(playerBalance).equal(initialAmount.sub(transferAmount).add(prizes[index]))
                 })
-            })
+            )
 
             const ownerBalance = await MockUSDT.balanceOf(deployer.address);
 
