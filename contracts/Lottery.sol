@@ -14,7 +14,7 @@ contract Lottery is VRFv2SubscriptionConsumer {
     uint256 private _lastPlayerMax;
     uint256 private immutable _maxAmount;
     uint256 private immutable _cycleLimit;
-    uint256 private constant _MIN_DEPOSIT = 10*6;
+    uint256 private constant _MIN_DEPOSIT = 10**6;
 
     address public immutable lotteryOwner;
     IERC20 private immutable _usdt;
