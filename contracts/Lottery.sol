@@ -9,17 +9,18 @@ import "./VRFv2SubscriptionConsumer.sol";
 contract Lottery is VRFv2SubscriptionConsumer {
     using SafeERC20 for IERC20;
 
+    bool private _isActive;
+
     uint256 private _currentCycle;
     uint256 private _requestId;
     uint256 private _lastPlayerMax;
+
     uint256 private immutable _maxAmount;
     uint256 private immutable _cycleLimit;
     uint256 private constant _MIN_DEPOSIT = 10**6;
 
     address public immutable lotteryOwner;
     IERC20 private immutable _usdt;
-
-    bool private _isActive;
 
     uint256[] private _prizes;
     mapping(uint256 => Player[]) private _players;
@@ -82,12 +83,12 @@ contract Lottery is VRFv2SubscriptionConsumer {
 
         _usdt.safeTransferFrom(msg.sender, address(this), amount);
 
-        uint256 len = _players[_currentCycle].length;
-        _players[_currentCycle][len] = Player({
-                addr: msg.sender,
-                start: _lastPlayerMax,
-                end: newLastPlayerMax
+        Player memory player = Player({
+            addr: msg.sender,
+            start: _lastPlayerMax,
+            end: newLastPlayerMax
         });
+        _players[_currentCycle].push(player);
         _lastPlayerMax = newLastPlayerMax;
 
         emit NewPlayer(msg.sender, amount, _lastPlayerMax);
