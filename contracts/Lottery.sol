@@ -64,7 +64,6 @@ contract Lottery is VRFv2SubscriptionConsumer {
 
     function buyTickets(uint256 amount) external isActive {
         uint256 newLastPlayerMax = _lastPlayerMax + amount;
-        require(newLastPlayerMax <= _maxAmount, "buyTickets: Amount exceeds the limit!");
         require(amount >= _MIN_DEPOSIT, "buyTickets: Amount is less from min deposit!");
 
         _usdt.safeTransferFrom(msg.sender, address(this), amount);
@@ -77,7 +76,7 @@ contract Lottery is VRFv2SubscriptionConsumer {
 
         emit NewPlayer(msg.sender, amount, _lastPlayerMax);
 
-        if (_lastPlayerMax == _maxAmount) {
+        if (_lastPlayerMax >= _maxAmount) {
             _requestId = requestRandomWords(uint32(_prizes.length));
             _isActive = false;
         }

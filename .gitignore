@@ -45,3 +45,5 @@ typechain-types/
 
 # Other project-specific files/directories to ignore
 # Add any additional files/directories specific to your project
+
+swapfile
