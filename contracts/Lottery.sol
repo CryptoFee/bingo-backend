@@ -5,7 +5,6 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "./VRFv2SubscriptionConsumer.sol";
-import "hardhat/console.sol";
 
 contract Lottery is VRFv2SubscriptionConsumer {
 
@@ -21,7 +20,7 @@ contract Lottery is VRFv2SubscriptionConsumer {
     uint256 private immutable _cycleLimit;
     address public immutable lotteryOwner;
     IERC20 private immutable _usdt;
-    uint256 private constant _MIN_DEPOSIT = 10 * 6;
+    uint256 private constant _MIN_DEPOSIT = 10 ** 6;
 
     struct Player {
         address addr;
@@ -31,6 +30,7 @@ contract Lottery is VRFv2SubscriptionConsumer {
 
     event NewPlayer(address indexed player, uint256 amount, uint256 newLastPlayerMax);
     event Winner(address indexed player, uint256 amount, uint256 cycle);
+    event CycleEnded();
 
     modifier isActive() {
         require(_isActive == true, "Lottery is not active!");
@@ -102,7 +102,6 @@ contract Lottery is VRFv2SubscriptionConsumer {
 
     function fulfillRandomWords(uint256 requestId, uint256[] memory randomWords) internal override {
         require(_requestId == requestId, "fulfillRandomWords: Request IDs not match!");
-
         _transferPrizesToWinners(randomWords);
         _resetGame();
     }
@@ -146,6 +145,7 @@ contract Lottery is VRFv2SubscriptionConsumer {
         _lastPlayerMax = 0;
         _currentCycle++;
         _isActive = _currentCycle <= _cycleLimit;
+        emit CycleEnded();
     }
 
 }

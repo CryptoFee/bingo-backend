@@ -2,9 +2,12 @@ import "@nomicfoundation/hardhat-toolbox";
 
 require('dotenv').config();
 require("@nomiclabs/hardhat-ethers");
-require("@nomiclabs/hardhat-etherscan");
+require("hardhat-contract-sizer");
+require("@nomicfoundation/hardhat-toolbox")
+
 
 const config = {
+    defaultNetwork: "mumbai",
     solidity: {
         version: "0.8.19",
         settings: {
@@ -19,17 +22,17 @@ const config = {
         apiKey: process.env.POLYGONSCAN_API_KEY,
     },
     networks: {
-        hardhat: {
+      /*  hardhat: {
             loggingEnabled: true,
           //  blockGasLimit: Number.MAX_SAFE_INTEGER - 1,  // set a high block gas limit,
             accounts: {
                 accountsBalance: "10000000000000000000000000000000000000"
             }
-        },
+        },*/
         mumbai: {
-            url: "https://rpc-mumbai.maticvigil.com/v1/",
-            accounts: [process.env.PRIVATE_KEY]
-        }
+            url: `https://polygon-mumbai.infura.io/v3/fd8b36322657478f8798e81ffc6c5e0a`,
+            accounts: [process.env.API_SECRET_KEY]
+        },
     },
     mocha: {
         timeout: 60000 * 60

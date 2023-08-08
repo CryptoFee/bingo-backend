@@ -44,7 +44,7 @@ export const transferUSDTToLottery = async (usdt: any, lotteryAddress: any, depl
 }
 
 function getRandomInt(min: number, max: number) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+    min = Math.ceil(min /  10 ** 6);
+    max = Math.floor(max / 10 ** 6);
+    return  (Math.floor(Math.random() * (max - min + 1)) + min ) * (10 ** 6);
 }
