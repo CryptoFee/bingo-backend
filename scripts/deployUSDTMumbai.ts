@@ -8,8 +8,7 @@ async function main() {
     await mockUSDT.deployed();
 
     replaceAbi(`USDT`)
-    replaceENV(`USDT_ADDRESS`,  mockUSDT.address)
-    replaceConstantsValue(`USDTContractAddress`, mockUSDT.address)
+    replaceENV(`USDT_ADDRESS`, mockUSDT.address)
 
     console.log("USDT Token deployed to:", mockUSDT.address);
 

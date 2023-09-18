@@ -24,7 +24,7 @@ async function main() {
     const Lottery = await hre.ethers.getContractFactory("Lottery");
     const lottery = await Lottery.deploy(
         mockUSDT.address,
-        dollar(1000),
+        dollar(10),
         4,
         [dollar(3), dollar(2), dollar(1)],
         Number(subId),
@@ -51,14 +51,14 @@ async function main() {
 
     await client.post('/contract', {
         address: lottery.address,
-        abi: getAbi("Lottery"),
+        abi: JSON.stringify(JSON.parse(getAbi("Lottery")).abi),
         isActive: true
     }, {headers: {Authorization: `Bearer ${accessToken}`}})
 
     replaceAbi(`Lottery`)
     replaceConstantsValue(`MainContractAddress`, lottery.address)
 
-    await transferUSDTToLottery(mockUSDT, lottery.address, deployer, [dollar(10), dollar(100)], 10)
+   // await transferUSDTToLottery(mockUSDT, lottery.address, deployer, [dollar(10), dollar(100)], 10)
 
 }
 

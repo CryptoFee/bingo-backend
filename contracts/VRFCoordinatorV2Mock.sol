@@ -107,6 +107,7 @@ contract VRFCoordinatorV2Mock is VRFCoordinatorV2Interface {
         uint256[] memory _words
     ) public {
         uint256 startGas = gasleft();
+        console.log("_subId", s_requests[_requestId].subId ,_requestId, s_requests[_requestId].subId);
         if (s_requests[_requestId].subId == 0) {
             revert("nonexistent request");
         }

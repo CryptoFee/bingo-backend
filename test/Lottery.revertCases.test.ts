@@ -36,7 +36,7 @@ describe("Lottery Unit Tests", async function () {
             );
 
             await approveTx.wait();
-            await expect(Lottery.buyLotteryTickets(player.address, amount, {gasLimit: 2000000})).to.be.revertedWith(revertedWith);
+            await expect(Lottery.buyTickets(amount, {gasLimit: 2000000})).to.be.revertedWith(revertedWith);
 
         })
 
@@ -62,7 +62,7 @@ describe("Lottery Unit Tests", async function () {
             );
 
             await approveTx.wait();
-            await expect(Lottery.buyLotteryTickets(player.address, dollar(1), {gasLimit: 2000000})).to.not.be.revertedWith(revertedWith);
+            await expect(Lottery.buyTickets(dollar(1), {gasLimit: 2000000})).to.not.be.revertedWith(revertedWith);
 
             const player2WithProvider = player2.connect(deployer.provider!);
 
@@ -75,7 +75,7 @@ describe("Lottery Unit Tests", async function () {
             );
 
             await approveTx2.wait();
-            await expect(Lottery.buyLotteryTickets(player2.address, amount, {gasLimit: 2000000})).to.be.revertedWith(revertedWith);
+            await expect(Lottery.buyTickets(amount, {gasLimit: 2000000})).to.be.revertedWith(revertedWith);
 
         })
 
@@ -106,9 +106,9 @@ describe("Lottery Unit Tests", async function () {
                 await approveTx.wait();
 
                 if (i == amountTooMuch.length - 1) {
-                    await expect(Lottery.buyLotteryTickets(player.address, amount, {gasLimit: 20000000})).to.be.revertedWith(TooMuchAmount);
+                    await expect(Lottery.buyTickets( amount, {gasLimit: 20000000})).to.be.revertedWith(TooMuchAmount);
                 } else {
-                    await expect(Lottery.buyLotteryTickets(player.address, amount, {gasLimit: 20000000})).to.not.be.revertedWith(TooMuchAmount);
+                    await expect(Lottery.buyTickets( amount, {gasLimit: 20000000})).to.not.be.revertedWith(TooMuchAmount);
                 }
             }
         })

@@ -6,9 +6,9 @@ async function main() {
     const Lottery = await ethers.getContractFactory("Lottery");
 
       const contract = await Lottery.deploy(
-          "0xA02f6adc7926efeBBd59Fd43A84f4E0c0c91e832",
+          "0x5F325221E35320E0CF57427697fbe3B31B58f0b4",
           dollar(10),
-          4,
+          10,
           [dollar(3), dollar(2), dollar(1)],
           Number(process.env.SUB_ID),
           process.env.COORDINATOR || "",

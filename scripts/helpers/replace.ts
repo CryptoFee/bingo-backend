@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const destDir = path.join(__dirname, '..', '..', '..', 'bingo-frontend', 'src', 'web3Utils', 'constants.ts');
+const destDir = path.join(__dirname, '..', '..', '..', 'bingo-frontend', '.env');
 
 export const replaceConstantsValue = (variableName: string, value: string) => {
 
