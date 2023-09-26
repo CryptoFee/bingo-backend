@@ -33,12 +33,11 @@ describe("Lottery unit tests with full implementation", async () => {
                 const approveTx = await MockUSDT.connect(playerWithProvider).approve(
                     Lottery.address,
                     transferAmount,
-                    {
-                        from: player.address,
-                    }
                 );
 
+
                 await approveTx.wait();
+
                 const tx = await lottery.buyTickets(transferAmount, {gasLimit: 300000})
                 await tx.wait()
                 const [isActive] = await Lottery.getLotteryDetails(1)
@@ -48,13 +47,14 @@ describe("Lottery unit tests with full implementation", async () => {
                 }
             }
 
-            await VRFCoordinatorV2Mock.fulfillRandomWords(iteration, Lottery.address, {gasLimit: 2500000})
+            const tx = await VRFCoordinatorV2Mock.fulfillRandomWords(iteration, Lottery.address, {gasLimit: 2500000})
 
             // @ts-ignore
             const logs = await Lottery.queryFilter('Winner', 0, "latest")
 
             await Promise.all(
                 logs.map(async (event, index) => {
+                    // @ts-ignore
                     const playerAddress = event.args['player']
                     const playerBalance = await MockUSDT.balanceOf(playerAddress);
                     expect(playerBalance).equal(initialAmount.sub(transferAmount).add(prizes[index]))

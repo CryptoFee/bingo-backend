@@ -107,7 +107,7 @@ contract VRFCoordinatorV2Mock is VRFCoordinatorV2Interface {
         uint256[] memory _words
     ) public {
         uint256 startGas = gasleft();
-        console.log("_subId", s_requests[_requestId].subId ,_requestId, s_requests[_requestId].subId);
+        console.log("_subId", s_requests[_requestId].subId, _requestId, s_requests[_requestId].numWords);
         if (s_requests[_requestId].subId == 0) {
             revert("nonexistent request");
         }
@@ -135,21 +135,6 @@ contract VRFCoordinatorV2Mock is VRFCoordinatorV2Interface {
         emit RandomWordsFulfilled(_requestId, _requestId, payment, success);
     }
 
-    /**
-     * @notice fundSubscription allows funding a subscription with an arbitrary amount for testing.
-   *
-   * @param _subId the subscription to fund
-   * @param _amount the amount to fund
-   */
-    function fundSubscription(uint64 _subId, uint96 _amount) public {
-        if (s_subscriptions[_subId].owner == address(0)) {
-            revert InvalidSubscription();
-        }
-        uint96 oldBalance = s_subscriptions[_subId].balance;
-        s_subscriptions[_subId].balance += _amount;
-        emit SubscriptionFunded(_subId, oldBalance, oldBalance + _amount);
-    }
-
     function requestRandomWords(
         bytes32 _keyHash,
         uint64 _subId,
@@ -166,6 +151,8 @@ contract VRFCoordinatorV2Mock is VRFCoordinatorV2Interface {
 
         s_requests[requestId] = Request({subId: _subId, callbackGasLimit: _callbackGasLimit, numWords: _numWords});
 
+        console.log("Sub Details:", requestId, _subId);
+
         emit RandomWordsRequested(
             _keyHash,
             requestId,
@@ -177,6 +164,21 @@ contract VRFCoordinatorV2Mock is VRFCoordinatorV2Interface {
             msg.sender
         );
         return requestId;
+    }
+
+    /**
+     * @notice fundSubscription allows funding a subscription with an arbitrary amount for testing.
+   *
+   * @param _subId the subscription to fund
+   * @param _amount the amount to fund
+   */
+    function fundSubscription(uint64 _subId, uint96 _amount) public {
+        if (s_subscriptions[_subId].owner == address(0)) {
+            revert InvalidSubscription();
+        }
+        uint96 oldBalance = s_subscriptions[_subId].balance;
+        s_subscriptions[_subId].balance += _amount;
+        emit SubscriptionFunded(_subId, oldBalance, oldBalance + _amount);
     }
 
     function createSubscription() external override returns (uint64 _subId) {
@@ -233,6 +235,7 @@ contract VRFCoordinatorV2Mock is VRFCoordinatorV2Interface {
     }
 
     function addConsumer(uint64 _subId, address _consumer) external override onlySubOwner(_subId) {
+
         if (s_consumers[_subId].length == MAX_CONSUMERS) {
             revert TooManyConsumers();
         }
@@ -242,6 +245,7 @@ contract VRFCoordinatorV2Mock is VRFCoordinatorV2Interface {
         }
 
         s_consumers[_subId].push(_consumer);
+
         emit ConsumerAdded(_subId, _consumer);
     }
 
@@ -304,15 +308,15 @@ contract VRFCoordinatorV2Mock is VRFCoordinatorV2Interface {
         // 0.004 Ether
     }
 
-     function requestSubscriptionOwnerTransfer(uint64 _subId, address _newOwner) external pure override {
-         revert("not implemented");
-     }
+    function requestSubscriptionOwnerTransfer(uint64 _subId, address _newOwner) external pure override {
+        revert("not implemented");
+    }
 
-     function acceptSubscriptionOwnerTransfer(uint64 _subId) external pure override {
-         revert("not implemented");
-     }
+    function acceptSubscriptionOwnerTransfer(uint64 _subId) external pure override {
+        revert("not implemented");
+    }
 
-     function pendingRequestExists(uint64 subId) public pure override returns (bool) {
-         revert("not implemented");
-     }
+    function pendingRequestExists(uint64 subId) public pure override returns (bool) {
+        revert("not implemented");
+    }
 }

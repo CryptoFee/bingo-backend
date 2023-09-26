@@ -13,7 +13,7 @@ async function main() {
 
     const mockUSDT = await getContract("USDT", process.env.USDT_ADDRESS || "")
     const VRFCoordinatorV2Mock = await getContract("VRFCoordinatorV2Mock", process.env.MOCK_COORDINATOR_ADDRESS || "")
-    const subId = process.env.SUB_ID
+    const subId = process.env.SUB_ID || 1
 
     console.log("USDT Token address is ", mockUSDT.address);
 
@@ -24,7 +24,7 @@ async function main() {
     const Lottery = await hre.ethers.getContractFactory("Lottery");
     const lottery = await Lottery.deploy(
         mockUSDT.address,
-        dollar(10),
+        dollar(1000),
         4,
         [dollar(3), dollar(2), dollar(1)],
         Number(subId),
@@ -42,7 +42,7 @@ async function main() {
 
     try {
         accessToken = await getAccessToken()
-    } catch {
+    } catch (e) {
         await createUser()
         accessToken = await getAccessToken()
     }
@@ -58,7 +58,7 @@ async function main() {
     replaceAbi(`Lottery`)
     replaceConstantsValue(`MainContractAddress`, lottery.address)
 
-   // await transferUSDTToLottery(mockUSDT, lottery.address, deployer, [dollar(10), dollar(100)], 10)
+   await transferUSDTToLottery(mockUSDT, lottery.address, deployer, [dollar(10), dollar(100)], 10)
 
 }
 

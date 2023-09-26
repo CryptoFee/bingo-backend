@@ -16,7 +16,7 @@
     "solhint": "^3.4.1"
   },
   "scripts": {
-    "test": "MAX_PLAYERS=100 REPORT_GAS=true  node --max-old-space-size=12000 ./node_modules/.bin/hardhat test test/Lottery.test.ts",
+    "test": "MAX_PLAYERS=100 REPORT_GAS=true  node --max-old-space-size=28000 ./node_modules/.bin/hardhat test test/Lottery.test.ts",
     "test:1000": "MAX_PLAYERS=1000 REPORT_GAS=true npx hardhat test test/Lottery.test.ts",
     "test:parallel": "npx hardhat test --parallel",
     "test:coverage": "npx hardhat coverage",
