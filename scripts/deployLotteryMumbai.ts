@@ -1,12 +1,13 @@
 import hre, {ethers} from "hardhat";
 import {dollar} from "../test/utils/helpers";
+import {replaceENV} from "./helpers/replace";
 
 async function main() {
 
     const Lottery = await ethers.getContractFactory("Lottery");
 
       const contract = await Lottery.deploy(
-          "0x5F325221E35320E0CF57427697fbe3B31B58f0b4",
+          process.env.USDT_ADDRESS || "",
           dollar(10),
           10,
           [dollar(3), dollar(2), dollar(1)],
@@ -16,6 +17,8 @@ async function main() {
       );
 
       await contract.deployed()
+
+    replaceENV(`LOTTERY_ADDRESS`, contract.address, ".env.mumbai")
 
       console.log("Lottery deployed to:", contract.address);
 

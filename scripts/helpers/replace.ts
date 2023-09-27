@@ -24,9 +24,9 @@ export const replaceAbi = (contractName: string) => {
     fs.copyFileSync(sourceFile, destFile)
 }
 
-export const replaceENV = (envName: string, value : string) => {
+export const replaceENV = (envName: string, value : string, envPath : string = ".env" ) => {
 
-    const destDir = path.join(__dirname, '..', '..', '.env');
+    const destDir = path.join(__dirname, '..', '..', envPath);
     const filePath = path.resolve(__dirname, destDir);
 
     const data = fs.readFileSync(filePath, "utf-8")
