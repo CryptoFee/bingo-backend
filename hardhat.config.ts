@@ -9,13 +9,14 @@ require("@nomicfoundation/hardhat-toolbox")
 const config = {
     defaultNetwork: "mumbai", // TODO uncomment before deployment
     solidity: {
-        version: "0.8.19",
-        settings: {
-            optimizer: {
-                enabled: true,
-                runs: 200
+        compilers: [
+            {
+                version: '0.8.20',
+                settings: {
+                    evmVersion: 'paris'
+                }
             }
-        }
+        ]
     },
     etherscan: {
         url: "https://api.polygonscan.com/",

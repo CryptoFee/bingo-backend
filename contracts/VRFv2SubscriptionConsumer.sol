@@ -1,10 +1,9 @@
 // SPDX-License-Identifier: MIT
 // An example of a consumer contract that relies on a subscription for funding.
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.20;
 
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
-import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
-import "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
+import "@chainlink/contracts/src/v0.8/vrf/VRFConsumerBaseV2.sol";
 
 /**
  * Request testnet LINK and ETH here: https://faucets.chain.link/
@@ -17,7 +16,7 @@ import "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
  * DO NOT USE THIS CODE IN PRODUCTION.
  */
 
-abstract contract VRFv2SubscriptionConsumer is VRFConsumerBaseV2, ConfirmedOwner {
+abstract contract VRFv2SubscriptionConsumer is VRFConsumerBaseV2 {
 
     bytes32 hashKey;
 
@@ -34,7 +33,7 @@ abstract contract VRFv2SubscriptionConsumer is VRFConsumerBaseV2, ConfirmedOwner
     // this limit based on the network that you select, the size of the request,
     // and the processing of the callback request in the fulfillRandomWords()
     // function.
-    uint32 constant callbackGasLimit = 25000000;
+    uint32 constant callbackGasLimit = 1000000;
 
     // The default is 3, but you can set this higher.
     uint16 constant requestConfirmations = 3;
@@ -47,7 +46,7 @@ abstract contract VRFv2SubscriptionConsumer is VRFConsumerBaseV2, ConfirmedOwner
         uint64 _subscriptionId,
         address coordinator,
         bytes32 _keyHash
-    ) VRFConsumerBaseV2(coordinator) ConfirmedOwner(msg.sender) {
+    ) VRFConsumerBaseV2(coordinator) {
         COORDINATOR = VRFCoordinatorV2Interface(coordinator);
         subscriptionId = _subscriptionId;
         hashKey = _keyHash;
