@@ -21,7 +21,7 @@
     "test:parallel": "npx hardhat test --parallel",
     "test:coverage": "npx hardhat coverage",
     "deploy:mock-coordinator": "npx hardhat run ./scripts/deployCoordinator.ts --network localhost",
-    "deploy:USDT": "npx hardhat run scripts/deployUSDTMumbai.ts --network localhost",
+    "deploy:USDT": "npx hardhat run scripts/deployUSDT.ts --network localhost",
     "deploy:lottery": "npx hardhat run ./scripts/deployLottery.ts --network localhost",
     "deploy:test-array": "npx hardhat run ./scripts/deployTestArray.ts --network localhost",
     "test:test-array": "REPORT_GAS=true node --max-old-space-size=14000 ./node_modules/.bin/hardhat test test/TestArray.test.ts ",

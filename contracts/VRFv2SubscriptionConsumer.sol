@@ -5,27 +5,14 @@ pragma solidity ^0.8.20;
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 import "@chainlink/contracts/src/v0.8/vrf/VRFConsumerBaseV2.sol";
 
-/**
- * Request testnet LINK and ETH here: https://faucets.chain.link/
- * Find information on LINK Token Contracts and get the latest ETH and LINK faucets here: https://docs.chain.link/docs/link-token-contracts/
- */
-
-/**
- * THIS IS AN EXAMPLE CONTRACT THAT USES HARDCODED VALUES FOR CLARITY.
- * THIS IS AN EXAMPLE CONTRACT THAT USES UN-AUDITED CODE.
- * DO NOT USE THIS CODE IN PRODUCTION.
- */
-
 abstract contract VRFv2SubscriptionConsumer is VRFConsumerBaseV2 {
-
-    bytes32 hashKey;
-
-    event RequestSent(uint256 requestId, uint32 numWords);
 
     VRFCoordinatorV2Interface immutable COORDINATOR;
 
-    // Your subscription ID.
+    bytes32 immutable hashKey;
     uint64 immutable subscriptionId;
+
+
 
     // Depends on the number of requested values that you want sent to the
     // fulfillRandomWords() function. Storing each word costs about 20,000 gas,
@@ -33,15 +20,11 @@ abstract contract VRFv2SubscriptionConsumer is VRFConsumerBaseV2 {
     // this limit based on the network that you select, the size of the request,
     // and the processing of the callback request in the fulfillRandomWords()
     // function.
-    uint32 constant callbackGasLimit = 1000000;
+    uint32 constant callbackGasLimit = 500000;
 
     // The default is 3, but you can set this higher.
-    uint16 constant requestConfirmations = 3;
+    uint16 constant requestConfirmations = 10;
 
-    /**
-     * HARDCODED FOR SEPOLIA
-     * COORDINATOR: 0x8103B0A8A00be2DDC778e6e7eaa21791Cd364625
-     */
     constructor(
         uint64 _subscriptionId,
         address coordinator,

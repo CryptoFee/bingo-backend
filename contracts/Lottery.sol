@@ -15,6 +15,7 @@ contract Lottery is VRFv2SubscriptionConsumer {
     bool private _isActive;
     uint256[] private _prizes;
     mapping(uint256 => Player[]) private _players;
+    mapping(uint256 => Winner[]) private _winners;
     uint256 private immutable _maxAmount;
     uint256 private immutable _cycleLimit;
     address public immutable lotteryOwner;
@@ -27,8 +28,12 @@ contract Lottery is VRFv2SubscriptionConsumer {
         uint256 end;
     }
 
+    struct Winner {
+        address addr;
+        uint256 prize;
+    }
+
     event NewPlayer(address indexed player, uint256 amount, uint256 newLastPlayerMax);
-    event Winner(address indexed player, uint256 amount, uint256 cycle);
     event CycleEnded();
 
     modifier isActive() {
@@ -88,14 +93,16 @@ contract Lottery is VRFv2SubscriptionConsumer {
     function getLotteryDetails(uint32 cycleNumber) external view returns (
         bool,
         Player[] memory,
+        Winner[] memory,
         uint[] memory,
         uint
     ){
         return (
-            _isActive,
-            _players[cycleNumber],
-            _prizes,
-            _maxAmount
+        _isActive,
+        _players[cycleNumber],
+        _winners[cycleNumber],
+        _prizes,
+        _maxAmount
         );
     }
 
@@ -107,10 +114,14 @@ contract Lottery is VRFv2SubscriptionConsumer {
 
     function _transferPrizesToWinners(uint256[] memory randomWords) private {
         for (uint256 i = 0; i < randomWords.length; i++) {
-            uint256 luckyNumber = (randomWords[i] % (_maxAmount / 10 ** 6 )) + 1;
+            uint256 luckyNumber = (randomWords[i] % (_maxAmount / _MIN_DEPOSIT )) + 1;
             address luckyPlayer = _binarySearch(luckyNumber);
             _usdt.safeTransfer(luckyPlayer, _prizes[i]);
-            emit Winner(luckyPlayer, _prizes[i], _currentCycle);
+
+            _winners[_currentCycle].push(Winner({
+                addr: luckyPlayer,
+                prize: _prizes[i]
+            }));
         }
 
         uint256 contractBalance = _usdt.balanceOf(address(this));
@@ -126,9 +137,9 @@ contract Lottery is VRFv2SubscriptionConsumer {
             uint256 mid = low + (high - low) / 2;
             Player storage player = players[mid];
 
-            if (target >= player.start / 10 ** 6 && target <= player.end / 10 ** 6) {
+            if (target >= player.start / _MIN_DEPOSIT && target <= player.end / _MIN_DEPOSIT) {
                 return player.addr;
-            } else if (target < player.start / 10 ** 6 ) {
+            } else if (target < player.start / _MIN_DEPOSIT) {
                 if (mid == 0) break;
                 high = mid - 1;
             } else {
