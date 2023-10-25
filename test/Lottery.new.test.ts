@@ -1,5 +1,5 @@
 import {generatePlayers, initialTransferAmount} from "./utils/createRandomPlayerWithUSDT";
-import {createRandomNumberConsumerFixtureDeploy} from "./utils/deployRandomNumberConsumerFixture";
+import {createRandomNumberConsumerFixtureDeploy} from "./utils/deployRandomNumberConsumerFixture.new";
 import {dollar, getArguments} from "./utils/helpers";
 import {loadFixture} from "@nomicfoundation/hardhat-network-helpers"
 import {expect} from "chai"
@@ -21,14 +21,14 @@ describe("Lottery unit tests with full implementation", async () => {
         const startGame = async (iteration: number, initialAmount: BigNumber) => {
 
             const ownerInitialBalance = await MockUSDT.balanceOf(deployer.address);
-
+console.log("PLayers", players.length)
             for (let i = 0; i < players.length; i++) {
                 const player = players[i]
 
                 const playerWithProvider = player.connect(deployer.provider!);
 
                 // @ts-ignore
-                const lottery = await getContract("Lottery", Lottery.address, playerWithProvider)
+                const lottery = await getContract("LotteryNew", Lottery.address, playerWithProvider)
 
                 const approveTx = await MockUSDT.connect(playerWithProvider).approve(
                     Lottery.address,
@@ -38,7 +38,7 @@ describe("Lottery unit tests with full implementation", async () => {
 
                 await approveTx.wait();
 
-                const tx = await lottery.buyTickets(transferAmount, {gasLimit: 300000})
+                const tx = await lottery.buyTickets(transferAmount, {gasLimit: 3000000})
                 await tx.wait()
                 const [isActive] = await Lottery.getLotteryDetails(1)
                 console.log("Player bought ticket:", i);
@@ -97,7 +97,7 @@ describe("Lottery unit tests with less players than prizes", async () => {
                 );
 
                 await approveTx.wait();
-                const tx = await lottery.buyTickets(transferAmount, {gasLimit: 300000})
+                const tx = await lottery.buyTickets(transferAmount, {gasLimit: 3000000})
                 await tx.wait()
                 const [isActive] = await Lottery.getLotteryDetails(1)
 
@@ -155,7 +155,7 @@ describe("Lottery unit tests with less players than prizes", async () => {
                 const playerWithProvider = player.connect(deployer.provider!);
 
                 // @ts-ignore
-                const lottery = await getContract("Lottery", Lottery.address, playerWithProvider)
+                const lottery = await getContract("LotteryNew", Lottery.address, playerWithProvider)
 
                 const approveTx = await MockUSDT.connect(playerWithProvider).approve(
                     Lottery.address,
@@ -166,7 +166,7 @@ describe("Lottery unit tests with less players than prizes", async () => {
                 );
 
                 await approveTx.wait();
-                const tx = await lottery.buyTickets(transferAmount, {gasLimit: 300000})
+                const tx = await lottery.buyTickets(transferAmount, {gasLimit: 3000000})
                 await tx.wait()
                 const [isActive] = await Lottery.getLotteryDetails(1)
 

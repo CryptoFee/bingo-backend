@@ -1,4 +1,4 @@
-import {TestArguments} from "./helpers";
+import {dollar, TestArguments} from "./helpers";
 
 export const getArgumentsFor = (maxPlayers: string): TestArguments => {
     const config = {
@@ -8,10 +8,29 @@ export const getArgumentsFor = (maxPlayers: string): TestArguments => {
             cycles: 1
         },
         "100": {
-            maxAmount: 15000,
-            prizes: [
-                1, 1, 1, 1, 1, 1, 1, 1, 1, 1
-            ].map(v => v * 1000000), // 10 winners
+            maxAmount: 10000,
+           /* prizes: [
+                300000,
+                200000,
+                100000,
+                50000,
+                25000,
+                10000,
+                5000,
+                2500,
+                1000,
+                500,
+            ]*/  prizes: [
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1].map(v => v * 1000000), // 10 winners
             cycles:1
         }
     }

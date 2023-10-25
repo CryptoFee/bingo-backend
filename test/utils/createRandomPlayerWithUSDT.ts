@@ -20,6 +20,9 @@ export const createRandomPlayerWithUSDT = async (mockUSDTContract: any, deployer
 
 export const generatePlayers = (numb: number) => async (mockUSDTContract: any, deployer: any, etherStringAmount : string = "0.1") => {
     return await Promise.all(
-        Array(numb).fill(0).map(async () => await createRandomPlayerWithUSDT(mockUSDTContract, deployer, etherStringAmount))
+        Array(numb).fill(0).map(async (_, index) => {
+            console.log("Creating player : ", index)
+            return await createRandomPlayerWithUSDT(mockUSDTContract, deployer, etherStringAmount)
+        })
     )
 }

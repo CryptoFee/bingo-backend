@@ -15,9 +15,24 @@ contract TestArray is GasTracker {
         uint end;
     }
 
-    event Winners(uint256[]);
+    struct Winner {
+        address addr;
+        uint256 prize;
+    }
 
     mapping(uint => Player[]) private players;
+    mapping(uint => Winner[]) private winners;
+    mapping(uint => uint[][]) private randoms;
+
+    constructor(){
+        for (uint256 i = 0; i < 10; i++) {
+            players[cycle].push(Player({
+                playerAddress: address(this),
+                start: i,
+                end: i + 1
+            }));
+        }
+    }
 
     function addPlayer(Player[] calldata playersData) external {
 
@@ -29,12 +44,13 @@ contract TestArray is GasTracker {
     }
 
     function binarySearch(uint target) private view returns (address) {
+
         uint low = 0;
         uint high = players[cycle].length - 1;
-        while (low <= high) {
+        for (uint256 i = 0; i < 20; i++) {
             uint mid = (low + high + 1) / 2;
             if (target >= players[cycle][mid].start && target <= players[cycle][mid].end) {
-                return players[cycle][mid].playerAddress;
+               //
             } else if (target < players[cycle][mid].start) {
                 high = mid - 1;
             } else {
@@ -49,12 +65,15 @@ contract TestArray is GasTracker {
     function receivePlayersAndPickWinner(uint256[] calldata _randomWords) public {
 
         for (uint32 i = 0; i < _randomWords.length; i++) {
-            uint luckyNumber = (_randomWords[i] % maxAmount) + 1;
-            address luckyPlayer = binarySearch((_randomWords[i] % maxAmount) + 1);
-        }
-        uint256 contractBalance = address(this).balance;
-        console.log(contractBalance);
-        emit Winners(_randomWords);
+             uint luckyNumber = (_randomWords[i] % maxAmount) + 1;
+             address luckyPlayer = binarySearch((_randomWords[i] % maxAmount) + 1);
 
+            //randoms[1].push(_randomWords);
+
+            winners[1].push(Winner({
+                addr: address(this),
+                prize: 1000000
+            }));
+        }
     }
 }
