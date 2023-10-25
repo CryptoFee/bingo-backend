@@ -1,9 +1,14 @@
 import {ethers, network} from "hardhat";
 import {getArguments} from "./helpers";
 
-const {networkConfig} = require("../../hardhat.config.test")
+const {networkConfig} = require("../../hardhat.config.test");
 
-export const createRandomNumberConsumerFixtureDeploy = () => {
+interface ICRNCFDeploy {
+    dbContractAddresses: string[],
+    maxRowsCountEachDbContract: number
+}
+
+export const createRandomNumberConsumerFixtureDeploy = ({dbContractAddresses, maxRowsCountEachDbContract}: ICRNCFDeploy) => {
 
     const {maxAmount, prizes, cycles} = getArguments()
 
@@ -51,6 +56,8 @@ export const createRandomNumberConsumerFixtureDeploy = () => {
                 subscriptionId,
                 vrfCoordinatorAddress,
                 keyHash,
+                dbContractAddresses,
+                maxRowsCountEachDbContract
             )
 
         await VRFCoordinatorV2Mock.addConsumer(subscriptionId, Lottery.address)

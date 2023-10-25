@@ -27,3 +27,10 @@ export const AmountTooMuchForCurrentCycle = (power: number = 1) => [
         amount: dollar(3 * power),
     }
 ]
+
+export async function* asyncGenerator(count = 9) {
+    let i = 0;
+    while (i < count) {
+        yield i++;
+    }
+}
