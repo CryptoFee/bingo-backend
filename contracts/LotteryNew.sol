@@ -4,7 +4,6 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "./VRFv2SubscriptionConsumer.sol";
-import "hardhat/console.sol";
 import "./DBContract.sol";
 
 contract LotteryNew is VRFv2SubscriptionConsumer {
@@ -19,19 +18,14 @@ contract LotteryNew is VRFv2SubscriptionConsumer {
     bool private _isActive;
     uint256[] private _prizes;
     mapping(address => DBContract) private _DBContracts;
-    mapping(uint256 => Winner[]) private _winners;
     uint256 private immutable _maxAmount;
     uint256 private immutable _cycleLimit;
     address public immutable lotteryOwner;
     IERC20 private immutable _usdt;
     uint256 private constant _MIN_DEPOSIT = 10 ** 6;
 
-    struct Winner {
-        address addr;
-        uint256 prize;
-    }
-
     event NewPlayer(address indexed player, uint256 amount);
+    event FullFillRandomWords(uint256[] randomWords, uint256 cycle);
     event CycleEnded();
 
     modifier isActive() {
@@ -90,8 +84,7 @@ contract LotteryNew is VRFv2SubscriptionConsumer {
             _playersCount++;
         }
 
-        emit NewPlayer(msg.sender, amount);
-        console.log(_playersCount, _maxAmount, _maxAmount / 10 ** 6, 44444444);
+        emit NewPlayer(msg.sender, amount, _currentCycle, _playersCount);
 
         if (_playersCount == _maxAmount / 10 ** 6) {
             _requestId = requestRandomWords(uint32(_prizes.length));
@@ -107,14 +100,12 @@ contract LotteryNew is VRFv2SubscriptionConsumer {
     function getLotteryDetails(uint32 cycleNumber) external view returns (
         bool,
         address[] memory,
-        Winner[] memory,
         uint[] memory,
         uint
     ){
         return (
             _isActive,
             _dbContractAddresses,
-            _winners[cycleNumber],
             _prizes,
             _maxAmount
         );
@@ -123,6 +114,7 @@ contract LotteryNew is VRFv2SubscriptionConsumer {
     function fulfillRandomWords(uint256 requestId, uint256[] memory randomWords) internal override {
         require(_requestId == requestId, "fulfillRandomWords: Request IDs not match!");
         _transferPrizesToWinners(randomWords);
+        emit FullFillRandomWords(randomWords, _currentCycle);
         _resetGame();
     }
 
@@ -134,11 +126,6 @@ contract LotteryNew is VRFv2SubscriptionConsumer {
             uint256 currentUserIndex = luckyNumber - (currentContractIndex * _maxRowsCountEachDbContract);
             address luckyPlayer = _DBContracts[currentContractIndexAddress].getWinnerByIndexAndCycle(currentUserIndex, _currentCycle);
             _usdt.safeTransfer(luckyPlayer, _prizes[i]);
-
-            _winners[_currentCycle].push(Winner({
-                addr: luckyPlayer,
-                prize: _prizes[i]
-            }));
         }
 
         uint256 contractBalance = _usdt.balanceOf(address(this));
