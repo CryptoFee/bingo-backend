@@ -24,7 +24,7 @@ contract LotteryNew is VRFv2SubscriptionConsumer {
     IERC20 private immutable _usdt;
     uint256 private constant _MIN_DEPOSIT = 10 ** 6;
 
-    event NewPlayer(address indexed player, uint256 amount);
+    event NewPlayer(address indexed player, uint256 amount, uint256 cycle, uint256 playersCount);
     event FullFillRandomWords(uint256[] randomWords, uint256 cycle);
     event CycleEnded();
 
