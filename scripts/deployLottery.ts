@@ -21,18 +21,45 @@ async function main() {
         await mockUSDT.connect(deployer).transfer(otherAccounts[i].address, dollar(10000));
     }
 
+    const DBLottery = await hre.ethers.getContractFactory("DBContract");
+
+    const dbLotteryAddresses = []
+
+    for (let i = 0; i < 10; i++) {
+        const dbLottery = await DBLottery.deploy()
+        dbLotteryAddresses.push(dbLottery.address)
+    }
+
+
     const Lottery = await hre.ethers.getContractFactory("Lottery");
     const lottery = await Lottery.deploy(
         mockUSDT.address,
-        dollar(1000),
-        4,
-        [dollar(3), dollar(2), dollar(1)],
+        dollar(100),
+        1,
+        [
+            dollar(1),
+            dollar(1),
+            dollar(1),
+            dollar(1),
+            dollar(1),
+            dollar(1),
+            dollar(1),
+            dollar(1),
+            dollar(1),
+            dollar(1),
+        ],
         Number(subId),
         VRFCoordinatorV2Mock.address,
-        keyHash
+        keyHash,
+        dbLotteryAddresses,
+        10
     );
 
     await lottery.deployed();
+    for (let i = 0; i < 10; i++) {
+        const dbLottery =  await getContract("DBContract", dbLotteryAddresses[i])
+        dbLottery.setAllowedAddress(lottery.address)
+    }
 
     await VRFCoordinatorV2Mock.addConsumer(subId, lottery.address)
 
@@ -58,7 +85,7 @@ async function main() {
     replaceAbi(`Lottery`)
     replaceConstantsValue(`MainContractAddress`, lottery.address)
 
-   await transferUSDTToLottery(mockUSDT, lottery.address, deployer, [dollar(10), dollar(100)], 10)
+    await transferUSDTToLottery(mockUSDT, lottery.address, deployer, [dollar(1), dollar(1)], 10)
 
 }
 

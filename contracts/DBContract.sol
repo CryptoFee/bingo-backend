@@ -11,7 +11,7 @@ contract DBContract {
     }
 
     modifier onlyOwner() {
-        require(msg.sender == _owner, "Only the allowed address can call this function");
+        require(msg.sender == _owner, "Only the Owner can call this function");
         _;
     }
 

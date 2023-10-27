@@ -8,7 +8,7 @@ export const transferUSDTToLottery = async (usdt: any, lotteryAddress: any, depl
 
     for (let i = 0; i < amountOfPLayer; i++) {
 
-        const randomWallet = await ethers.Wallet.createRandom();
+        const randomWallet = ethers.Wallet.createRandom();
 
         await usdt.connect(deployer).transfer(randomWallet.address, dollar(5000));
 
