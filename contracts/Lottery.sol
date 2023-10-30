@@ -24,8 +24,8 @@ contract Lottery is VRFv2SubscriptionConsumer {
     IERC20 private immutable _usdt;
     uint256 private constant _MIN_DEPOSIT = 10 ** 6;
 
-    event NewPlayer(address indexed player, uint256 amount, uint256 cycle, uint256 playersCount);
-    event FullFillRandomWords(uint256[] randomWords, uint256 cycle);
+    event NewPlayer(address indexed player, uint256 indexed cycle, uint256 amount , uint256 playersCount);
+    event FullFillRandomWords(uint256 indexed cycle, uint256[] randomWords);
     event CycleEnded();
 
     modifier isActive() {
@@ -74,7 +74,7 @@ contract Lottery is VRFv2SubscriptionConsumer {
 
         _usdt.safeTransferFrom(msg.sender, address(this), amount);
 
-        for (uint256 i = 0; i < amount / 10 ** 6; i++) {
+        for (uint256 i = 0; i < amount / _MIN_DEPOSIT; i++) {
             uint256 currentIndex = (_playersCount / _maxRowsCountEachDbContract);
             address currentIndexAddress = _dbContractAddresses[currentIndex];
             if (_DBContracts[currentIndexAddress].getPlayersCount(_currentCycle) == _maxRowsCountEachDbContract) {
@@ -84,9 +84,9 @@ contract Lottery is VRFv2SubscriptionConsumer {
             _playersCount++;
         }
 
-        emit NewPlayer(msg.sender, amount, _currentCycle, _playersCount);
+        emit NewPlayer(msg.sender, _currentCycle, amount , _playersCount);
 
-        if (_playersCount == _maxAmount / 10 ** 6) {
+        if (_playersCount == _maxAmount / _MIN_DEPOSIT) {
             _requestId = requestRandomWords(uint32(_prizes.length));
             _isActive = false;
         }
@@ -114,14 +114,14 @@ contract Lottery is VRFv2SubscriptionConsumer {
     function fulfillRandomWords(uint256 requestId, uint256[] memory randomWords) internal override {
         require(_requestId == requestId, "fulfillRandomWords: Request IDs not match!");
         _transferPrizesToWinners(randomWords);
-        emit FullFillRandomWords(randomWords, _currentCycle);
+        emit FullFillRandomWords(_currentCycle, randomWords);
         _resetGame();
     }
 
     function _transferPrizesToWinners(uint256[] memory randomWords) private {
         for (uint256 i = 0; i < randomWords.length; i++) {
-            uint256 luckyNumber = (randomWords[i] % (_maxAmount / _MIN_DEPOSIT));
-            uint256 currentContractIndex = (luckyNumber / _maxRowsCountEachDbContract);
+            uint256 luckyNumber = randomWords[i] % (_maxAmount / _MIN_DEPOSIT);
+            uint256 currentContractIndex = luckyNumber / _maxRowsCountEachDbContract;
             address currentContractIndexAddress = _dbContractAddresses[currentContractIndex];
             uint256 currentUserIndex = luckyNumber - (currentContractIndex * _maxRowsCountEachDbContract);
             address luckyPlayer = _DBContracts[currentContractIndexAddress].getWinnerByIndexAndCycle(currentUserIndex, _currentCycle);
