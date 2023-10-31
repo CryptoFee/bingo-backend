@@ -11,13 +11,12 @@ export const getHttpClient = () => {
 export const getAccessToken = async () => {
    const client = getHttpClient()
 
-    const {data : {accessToken}} = await client.post('/authentication' , {
+    const {data: { access_token }} = await client.post('/auth/authentication' , {
         email : process.env.ADMIN_USER_NAME,
-        password : process.env.ADMIN_PASSWORD,
-        strategy : "local"
-    })
+        password : process.env.ADMIN_PASSWORD
+    });
 
-    return accessToken
+    return access_token
 }
 
 

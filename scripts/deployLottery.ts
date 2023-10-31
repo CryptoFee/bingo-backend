@@ -23,7 +23,7 @@ async function main() {
 
     const DBLottery = await hre.ethers.getContractFactory("DBContract");
 
-    const dbLotteryAddresses = []
+    const dbLotteryAddresses: string[] = []
 
     for (let i = 0; i < 10; i++) {
         const dbLottery = await DBLottery.deploy()
@@ -74,13 +74,14 @@ async function main() {
         accessToken = await getAccessToken()
     }
 
-    const client = getHttpClient()
+
+    const client = getHttpClient();
 
     await client.post('/contract', {
         address: lottery.address,
         abi: JSON.stringify(JSON.parse(getAbi("Lottery")).abi),
         isActive: true
-    }, {headers: {Authorization: `Bearer ${accessToken}`}})
+    }, {headers: {Authorization: `Bearer ${accessToken}`, "Content-Typ": "application/json"}})
 
     replaceAbi(`Lottery`)
     replaceConstantsValue(`MainContractAddress`, lottery.address)
