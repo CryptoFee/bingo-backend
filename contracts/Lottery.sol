@@ -24,7 +24,7 @@ contract Lottery is VRFv2SubscriptionConsumer {
     IERC20 private immutable _usdt;
     uint256 private constant _MIN_DEPOSIT = 10 ** 6;
 
-    event NewPlayer(address indexed player, uint256 indexed cycle, uint256 amount , uint256 playersCount);
+    event NewPlayer(address indexed player, uint256 indexed cycle, uint256 amount);
     event FullFillRandomWords(uint256 indexed cycle, uint256[] randomWords);
     event CycleEnded();
 
@@ -84,7 +84,7 @@ contract Lottery is VRFv2SubscriptionConsumer {
             _playersCount++;
         }
 
-        emit NewPlayer(msg.sender, _currentCycle, amount , _playersCount);
+        emit NewPlayer(msg.sender, _currentCycle, amount);
 
         if (_playersCount == _maxAmount / _MIN_DEPOSIT) {
             _requestId = requestRandomWords(uint32(_prizes.length));
@@ -97,7 +97,7 @@ contract Lottery is VRFv2SubscriptionConsumer {
         return _currentCycle;
     }
 
-    function getLotteryDetails(uint32 cycleNumber) external view returns (
+    function getLotteryDetails() external view returns (
         bool,
         address[] memory,
         uint[] memory,
