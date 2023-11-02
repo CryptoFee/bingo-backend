@@ -80,7 +80,8 @@ async function main() {
     await client.post('/contract', {
         address: lottery.address,
         abi: JSON.stringify(JSON.parse(getAbi("Lottery")).abi),
-        isActive: true
+        isActive: true,
+        currentCycle: 1
     }, {headers: {Authorization: `Bearer ${accessToken}`, "Content-Typ": "application/json"}})
 
     replaceAbi(`Lottery`)

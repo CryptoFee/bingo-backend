@@ -26,7 +26,7 @@ contract Lottery is VRFv2SubscriptionConsumer {
 
     event NewPlayer(address indexed player, uint256 indexed cycle, uint256 amount);
     event FullFillRandomWords(uint256 indexed cycle, uint256[] randomWords);
-    event CycleEnded();
+    event CycleEnded(uint256 currentCycle);
 
     modifier isActive() {
         require(_isActive == true, "Lottery is not active!");
@@ -137,7 +137,7 @@ contract Lottery is VRFv2SubscriptionConsumer {
         _playersCount = 0;
         _currentCycle++;
         _isActive = _currentCycle <= _cycleLimit;
-        emit CycleEnded();
+        emit CycleEnded(_currentCycle);
     }
 
 }
