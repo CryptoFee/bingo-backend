@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "./VRFv2SubscriptionConsumer.sol";
 import "./DBContract.sol";
+import "hardhat/console.sol";
 
 contract Lottery is VRFv2SubscriptionConsumer {
 
@@ -24,8 +25,8 @@ contract Lottery is VRFv2SubscriptionConsumer {
     IERC20 private immutable _usdt;
     uint256 private constant _MIN_DEPOSIT = 10 ** 6;
 
-    event NewPlayer(address indexed player, uint256 indexed cycle, uint256 amount);
-    event FullFillRandomWords(uint256 indexed cycle, uint256[] randomWords);
+    event NewPlayer(address player, uint256 cycle, uint256 amount);
+    event FullFillRandomWords(uint256 cycle, uint256[] randomWords);
     event CycleEnded(uint256 currentCycle);
 
     modifier isActive() {
@@ -88,6 +89,7 @@ contract Lottery is VRFv2SubscriptionConsumer {
 
         if (_playersCount == _maxAmount / _MIN_DEPOSIT) {
             _requestId = requestRandomWords(uint32(_prizes.length));
+            console.log(_requestId, "------------");
             _isActive = false;
         }
 

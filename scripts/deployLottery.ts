@@ -5,14 +5,16 @@ import {dollar} from "../test/utils/helpers";
 import {createUser, getAccessToken, getHttpClient} from "./helpers/auth";
 import {getContract} from "./helpers/getContract";
 
-export const keyHash = "0xd89b2bf150e3b9e13446986e571fb9cab24b13cea0a43ea20a6049a85cc807cc"
+export const keyHash = "0xd89b2bf150e3b9e13446986e571fb9cab24b13cea0a43ea20a6049a85cc807cc";
+
+const PRIZES = [1,1,1]
 
 async function main() {
 
     const [deployer, ...otherAccounts] = await hre.ethers.getSigners()
 
     const mockUSDT = await getContract("USDT", process.env.USDT_ADDRESS || "")
-    const VRFCoordinatorV2Mock = await getContract("VRFCoordinatorV2Mock", process.env.MOCK_COORDINATOR_ADDRESS || "")
+    const VRFCoordinatorV2Mock = await getContract("VRFCoordinatorV2Mock", process.env.COORDINATOR || "")
     const subId = process.env.SUB_ID || 1
 
     console.log("USDT Token address is ", mockUSDT.address);
@@ -34,20 +36,9 @@ async function main() {
     const Lottery = await hre.ethers.getContractFactory("Lottery");
     const lottery = await Lottery.deploy(
         mockUSDT.address,
-        dollar(100),
+        dollar(Number(process.env.MAX_AMOUNT)),
         1,
-        [
-            dollar(1),
-            dollar(1),
-            dollar(1),
-            dollar(1),
-            dollar(1),
-            dollar(1),
-            dollar(1),
-            dollar(1),
-            dollar(1),
-            dollar(1),
-        ],
+        PRIZES.map(p => dollar(p)),
         Number(subId),
         VRFCoordinatorV2Mock.address,
         keyHash,
@@ -62,7 +53,6 @@ async function main() {
     }
 
     await VRFCoordinatorV2Mock.addConsumer(subId, lottery.address)
-
     console.log("Lottery deployed to:", lottery.address);
 
     let accessToken
@@ -81,13 +71,17 @@ async function main() {
         address: lottery.address,
         abi: JSON.stringify(JSON.parse(getAbi("Lottery")).abi),
         isActive: true,
-        currentCycle: 1
+        currentCycle: 1,
+        maxAmount: Number(process.env.MAX_AMOUNT),
+        prizes: PRIZES,
+        USDTAddress: process.env.USDT_ADDRESS,
+        dbLotteryAddresses
     }, {headers: {Authorization: `Bearer ${accessToken}`, "Content-Typ": "application/json"}})
 
     replaceAbi(`Lottery`)
     replaceConstantsValue(`MainContractAddress`, lottery.address)
 
-    await transferUSDTToLottery(mockUSDT, lottery.address, deployer, [dollar(1), dollar(1)], 10)
+    // await transferUSDTToLottery(mockUSDT, lottery.address, deployer, [dollar(1), dollar(1)], 10)
 
 }
 
