@@ -76,7 +76,10 @@ contract Lottery is VRFv2SubscriptionConsumer {
         _usdt.safeTransferFrom(msg.sender, address(this), amount);
 
         for (uint256 i = 0; i < amount / _MIN_DEPOSIT; i++) {
-            uint256 currentIndex = (_playersCount / _maxRowsCountEachDbContract);
+            uint256 currentIndex = 0;
+            if(_playersCount > 0) {
+                currentIndex = (_playersCount / _maxRowsCountEachDbContract);
+            }
             address currentIndexAddress = _dbContractAddresses[currentIndex];
             if (_DBContracts[currentIndexAddress].getPlayersCount(_currentCycle) == _maxRowsCountEachDbContract) {
                 currentIndex++;
@@ -85,7 +88,7 @@ contract Lottery is VRFv2SubscriptionConsumer {
             _playersCount++;
         }
 
-        emit NewPlayer(msg.sender, _currentCycle, amount);
+    emit NewPlayer(msg.sender, _currentCycle, amount);
 
         if (_playersCount == _maxAmount / _MIN_DEPOSIT) {
             _requestId = requestRandomWords(uint32(_prizes.length));
