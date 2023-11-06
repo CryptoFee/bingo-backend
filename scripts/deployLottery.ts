@@ -37,7 +37,7 @@ async function main() {
     const lottery = await Lottery.deploy(
         mockUSDT.address,
         dollar(Number(process.env.MAX_AMOUNT)),
-        1,
+        Number(process.env.CYCLE_LIMIT),
         PRIZES.map(p => dollar(p)),
         Number(subId),
         VRFCoordinatorV2Mock.address,
@@ -75,6 +75,7 @@ async function main() {
         maxAmount: Number(process.env.MAX_AMOUNT),
         prizes: PRIZES,
         USDTAddress: process.env.USDT_ADDRESS,
+        cycleLimit: Number(process.env.CYCLE_LIMIT),
         dbLotteryAddresses
     }, {headers: {Authorization: `Bearer ${accessToken}`, "Content-Typ": "application/json"}})
 
