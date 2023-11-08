@@ -71,7 +71,7 @@ contract Lottery is VRFv2SubscriptionConsumer {
     function buyTickets(uint256 amount) external isActive {
 
         require(amount >= _MIN_DEPOSIT, "buyTickets: Amount is less from min deposit!");
-        require(_playersCount + amount < _maxAmount, "Too much money.");
+        require( (_playersCount * _MIN_DEPOSIT) + amount < _maxAmount, "Too much money.");
 
         _usdt.safeTransferFrom(msg.sender, address(this), amount);
 
