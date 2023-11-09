@@ -66,6 +66,7 @@ async function main() {
 
 
     const client = getHttpClient();
+    const { blockNumber, hash } = lottery.deployTransaction;
 
     await client.post('/contract', {
         address: lottery.address,
@@ -76,7 +77,10 @@ async function main() {
         prizes: PRIZES,
         USDTAddress: process.env.USDT_ADDRESS,
         cycleLimit: Number(process.env.CYCLE_LIMIT),
-        dbLotteryAddresses
+        dbLotteryAddresses,
+        blockNumber,
+        lastCheckedBlockNumber: blockNumber,
+        transactionHash: hash
     }, {headers: {Authorization: `Bearer ${accessToken}`, "Content-Typ": "application/json"}})
 
     replaceAbi(`Lottery`)
