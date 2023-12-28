@@ -8,7 +8,7 @@ export const getArgumentsFor = (maxPlayers: string): TestArguments => {
             cycles: 1
         },
         "100": {
-            maxAmount: 1000,
+            maxAmount: 10000,
            /* prizes: [
                 300000,
                 200000,

@@ -23,7 +23,7 @@ async function main() {
     await VRFCoordinatorV2Mock.fundSubscription(subscriptionId, fundAmount)
 
     replaceAbi(`VRFCoordinatorV2Mock`)
-    replaceENV(`MOCK_COORDINATOR_ADDRESS`,  VRFCoordinatorV2Mock.address)
+    replaceENV(`COORDINATOR`,  VRFCoordinatorV2Mock.address)
     replaceENV(`SUB_ID`,  subscriptionId.toString())
     replaceConstantsValue(`VRFCoordinatorV2MockAddress`, VRFCoordinatorV2Mock.address)
 }

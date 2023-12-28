@@ -32,7 +32,6 @@ async function main() {
         dbLotteryAddresses.push(dbLottery.address)
     }
 
-
     const Lottery = await hre.ethers.getContractFactory("Lottery");
     const lottery = await Lottery.deploy(
         mockUSDT.address,
@@ -52,7 +51,8 @@ async function main() {
         dbLottery.setAllowedAddress(lottery.address)
     }
 
-    await VRFCoordinatorV2Mock.addConsumer(subId, lottery.address)
+    await VRFCoordinatorV2Mock.addConsumer(subId, lottery.address, { gasLimit: 300000 })
+
     console.log("Lottery deployed to:", lottery.address);
 
     let accessToken
@@ -63,7 +63,6 @@ async function main() {
         await createUser()
         accessToken = await getAccessToken()
     }
-
 
     const client = getHttpClient();
     const { blockNumber, hash } = lottery.deployTransaction;
@@ -86,7 +85,7 @@ async function main() {
     replaceAbi(`Lottery`)
     replaceConstantsValue(`MainContractAddress`, lottery.address)
 
-    // await transferUSDTLotterToLottery(mockUSDT, lottery.address, deployer, [dollar(1), dollar(1)], 10)
+     await transferUSDTToLottery(mockUSDT, lottery.address, deployer, [dollar(1), dollar(1)], 30)
 
 }
 
