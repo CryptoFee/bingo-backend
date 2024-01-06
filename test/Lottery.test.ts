@@ -2,29 +2,34 @@ import {generatePlayers, initialTransferAmount} from "./utils/createRandomPlayer
 import {createRandomNumberConsumerFixtureDeploy} from "./utils/deployRandomNumberConsumerFixture";
 import {asyncGenerator, dollar, getArguments} from "./utils/helpers";
 import {loadFixture} from "@nomicfoundation/hardhat-network-helpers"
-import {BigNumber} from "ethers";
 import {getContract} from "../scripts/helpers/getContract";
 import {createDbContractsFixture} from "./utils/deployDbContractsFixture";
+import {expect} from "chai";
 
-const transferAmount = dollar(1000)
+const transferAmount = dollar(500)
 
 const DB_COUNTS = 1000;
 const MAX_ITEMS_IN_DB = 1000;
-const PLAYERS_COUNT = 1000;
+const PLAYERS_COUNT = 2000;
+const MIN_DEPOSIT = 1;
 
 describe("Lottery unit tests with full implementation", async () => {
     it("Should successfully add multiple players with each 1$ And Check for winners balances", async () => {
-        const dbContracts = [];
+        const dbContracts: any[] = [];
         // generating 10 contracts and storing them
         for await (const i of asyncGenerator(DB_COUNTS)) {
-            const { DBContract} = await loadFixture(
+            const {DBContract} = await loadFixture(
                 createDbContractsFixture()
             );
             dbContracts.push(DBContract);
         }
-        const { Lottery, MockUSDT, VRFCoordinatorV2Mock, deployer,  } = await loadFixture(
-            createRandomNumberConsumerFixtureDeploy({ dbContractAddresses: dbContracts.map(c => c.address), maxRowsCountEachDbContract: MAX_ITEMS_IN_DB })
+        const {Lottery, MockUSDT, VRFCoordinatorV2Mock, deployer,} = await loadFixture(
+            createRandomNumberConsumerFixtureDeploy({
+                dbContractAddresses: dbContracts.map(c => c.address),
+                maxRowsCountEachDbContract: MAX_ITEMS_IN_DB
+            })
         );
+
         for await (const i of asyncGenerator(DB_COUNTS)) {
             await dbContracts[i].setAllowedAddress(Lottery.address);
         }
@@ -39,20 +44,42 @@ describe("Lottery unit tests with full implementation", async () => {
             const approveTx = await MockUSDT.connect(playerWithProvider).approve(
                 Lottery.address,
                 transferAmount,
-                {gasLimit : 2100000}
+                {gasLimit: 2100000}
             );
-            console.log("Alert");
             await approveTx.wait();
 
             const tx = await lottery.buyTickets(transferAmount)
             await tx.wait();
             console.log("Buy tickets ", i)
         }
-        await VRFCoordinatorV2Mock.fulfillRandomWords(1, Lottery.address, {gasLimit: 2500000})
-        const playersCountByDbs: { [key: string]: BigNumber } = {};
-        for await (const i of asyncGenerator(DB_COUNTS)) {
-            playersCountByDbs[dbContracts[i].address] = await dbContracts[i].getPlayersCount(1)
-        }
-        console.log(playersCountByDbs, 'playersCountByDbs');
-    })
+
+        const tx = await VRFCoordinatorV2Mock.fulfillRandomWords(1, Lottery.address, {gasLimit: 25000000})
+
+        await tx.wait();
+
+        await new Promise(async (resolve, reject) => {
+            await Lottery.on("FullFillRandomWords", async (setter, randomWords) => {
+                for await (const i of asyncGenerator(randomWords.length)) {
+                    try {
+                        const maxAmount = (DB_COUNTS * MAX_ITEMS_IN_DB)
+                        const luckyNumber = randomWords[i].mod(BigInt(maxAmount / MIN_DEPOSIT))
+                        const currentContractIndex = luckyNumber.div(MAX_ITEMS_IN_DB);
+                        const currentContract = dbContracts[currentContractIndex];
+                        const currentUserIndex = luckyNumber.sub(currentContractIndex.mul(MAX_ITEMS_IN_DB))
+                        const luckyPlayer = await currentContract.getWinnerByIndexAndCycle(currentUserIndex, 1);
+
+                        const currentBalance = await MockUSDT.balanceOf(luckyPlayer)
+                        console.log({luckyPlayer, currentBalance})
+                        expect(currentBalance).to.equal(initialTransferAmount.sub(transferAmount).add(BigInt(getArguments().prizes[i])))
+                    } catch (e) {
+                        reject(e)
+                    }
+                }
+                resolve("Success")
+            })
+        });
+
+        await new Promise(res => setTimeout(() => res(null), 5000));
+
+    }).timeout(604800000)
 })

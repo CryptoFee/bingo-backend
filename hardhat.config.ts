@@ -42,7 +42,7 @@ const config = {
          },*/
     },
     mocha: {
-        timeout: 60000 * 60
+        timeout: 60000 * 60 * 24 * 7
     }
 };
 
