@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "./VRFv2SubscriptionConsumer.sol";
 import "./DBContract.sol";
-import "hardhat/console.sol";
+//import "hardhat/console.sol";
 
 contract Lottery is VRFv2SubscriptionConsumer {
 
@@ -34,6 +34,11 @@ contract Lottery is VRFv2SubscriptionConsumer {
         _;
     }
 
+    modifier onlyOwner() {
+        require(msg.sender == lotteryOwner, "Only the Owner can call this function");
+        _;
+    }
+
     constructor(
         address usdtTokenAddress,
         uint256 maxAmount,
@@ -42,18 +47,12 @@ contract Lottery is VRFv2SubscriptionConsumer {
         uint64 subscriptionId,
         address coordinator,
         bytes32 keyHash,
-        address[] memory dbContractAddresses,
         uint256 maxRowsCountEachDbContract
     ) VRFv2SubscriptionConsumer(subscriptionId, coordinator, keyHash) {
         require(usdtTokenAddress != address(0), "Lottery: Invalid USDT address!");
         require(maxAmount != 0, "Lottery: Zero max amount!");
         require(cycleLimit != 0, "Lottery: Zero cycle limit!");
         require(prizes.length != 0, "Lottery: Empty prizes array!");
-        _dbContractAddresses = dbContractAddresses;
-
-        for (uint256 i = 0; i < dbContractAddresses.length; i++) {
-            _DBContracts[dbContractAddresses[i]] = DBContract(dbContractAddresses[i]);
-        }
 
         _maxRowsCountEachDbContract = maxRowsCountEachDbContract;
         lotteryOwner = msg.sender;
@@ -68,10 +67,17 @@ contract Lottery is VRFv2SubscriptionConsumer {
         _isActive = true;
     }
 
+    function setDBContracts(address[] memory dbContractAddresses) external onlyOwner {
+        for (uint256 i = 0; i < dbContractAddresses.length; i++) {
+            _dbContractAddresses.push(dbContractAddresses[i]);
+            _DBContracts[dbContractAddresses[i]] = DBContract(dbContractAddresses[i]);
+        }
+    }
+
     function buyTickets(uint256 amount) external isActive {
 
         require(amount >= _MIN_DEPOSIT, "buyTickets: Amount is less from min deposit!");
-        require( (_playersCount * _MIN_DEPOSIT) + amount <= _maxAmount, "Too much money.");
+        require((_playersCount * _MIN_DEPOSIT) + amount <= _maxAmount, "Too much money.");
 
         _usdt.safeTransferFrom(msg.sender, address(this), amount);
 
@@ -80,6 +86,7 @@ contract Lottery is VRFv2SubscriptionConsumer {
             if (_playersCount > 0) {
                 currentIndex = (_playersCount / _maxRowsCountEachDbContract);
             }
+
             address currentIndexAddress = _dbContractAddresses[currentIndex];
             if (_DBContracts[currentIndexAddress].getPlayersCount(_currentCycle) == _maxRowsCountEachDbContract) {
                 currentIndex++;

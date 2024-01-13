@@ -41,7 +41,6 @@ async function main() {
         Number(subId),
         VRFCoordinatorV2Mock.address,
         keyHash,
-        dbLotteryAddresses,
         10
     );
 

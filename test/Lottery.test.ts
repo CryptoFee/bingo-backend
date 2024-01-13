@@ -48,7 +48,7 @@ describe("Lottery unit tests with full implementation", async () => {
             );
             await approveTx.wait();
 
-            const tx = await lottery.buyTickets(transferAmount)
+            const tx = await lottery.buyTickets(transferAmount, {gasLimit: 15000000})
             await tx.wait();
             console.log("Buy tickets ", i)
         }
@@ -58,7 +58,7 @@ describe("Lottery unit tests with full implementation", async () => {
         await tx.wait();
 
         await new Promise(async (resolve, reject) => {
-            await Lottery.on("FullFillRandomWords", async (setter, randomWords) => {
+            Lottery.on("FullFillRandomWords", async (_, randomWords) => {
                 for await (const i of asyncGenerator(randomWords.length)) {
                     try {
                         const maxAmount = (DB_COUNTS * MAX_ITEMS_IN_DB)

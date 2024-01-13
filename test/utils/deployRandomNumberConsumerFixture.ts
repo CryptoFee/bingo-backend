@@ -8,7 +8,10 @@ interface ICRNCFDeploy {
     maxRowsCountEachDbContract: number
 }
 
-export const createRandomNumberConsumerFixtureDeploy = ({dbContractAddresses, maxRowsCountEachDbContract}: ICRNCFDeploy) => {
+export const createRandomNumberConsumerFixtureDeploy = ({
+                                                            dbContractAddresses,
+                                                            maxRowsCountEachDbContract
+                                                        }: ICRNCFDeploy) => {
 
     const {maxAmount, prizes, cycles} = getArguments()
 
@@ -56,12 +59,25 @@ export const createRandomNumberConsumerFixtureDeploy = ({dbContractAddresses, ma
                 subscriptionId,
                 vrfCoordinatorAddress,
                 keyHash,
-                dbContractAddresses,
                 maxRowsCountEachDbContract
             )
+
+        const addresses = splitArrayIntoChunks(dbContractAddresses, 500)
+
+        await Lottery.setDBContracts(addresses[0])
+        await Lottery.setDBContracts(addresses[1])
 
         await VRFCoordinatorV2Mock.addConsumer(subscriptionId, Lottery.address)
 
         return {Lottery, MockUSDT, VRFCoordinatorV2Mock, deployer}
     }
+}
+
+function splitArrayIntoChunks<T>(array: T[], chunkSize: number) {
+    let result = [];
+    for (let i = 0; i < array.length; i += chunkSize) {
+        let chunk = array.slice(i, i + chunkSize);
+        result.push(chunk);
+    }
+    return result;
 }
