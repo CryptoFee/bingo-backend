@@ -34,3 +34,12 @@ export async function* asyncGenerator(count = 9) {
         yield i++;
     }
 }
+
+export function splitArrayIntoChunks<T>(array: T[], chunkSize: number) {
+    let result = [];
+    for (let i = 0; i < array.length; i += chunkSize) {
+        let chunk = array.slice(i, i + chunkSize);
+        result.push(chunk);
+    }
+    return result;
+}

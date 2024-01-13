@@ -1,8 +1,9 @@
 import hre from "hardhat";
-import {dollar} from "../test/utils/helpers";
+import {dollar, splitArrayIntoChunks} from "../test/utils/helpers";
 import {env, waitForBlocks} from "./helpers/utils";
 import {getAbi, replaceENV} from "./helpers/replace";
 import {createUser, getAccessToken, getHttpClient} from "./helpers/auth";
+import {getContract} from "./helpers/getContract";
 
 
 async function main() {
@@ -10,8 +11,8 @@ async function main() {
     const Lottery = await hre.ethers.getContractFactory("Lottery");
 
     const dbLotteryAddresses: string[] = []
-    let totalContracts = 500;
-    let batchSize = 500;
+    let totalContracts = 1000;
+    let batchSize = 1000;
     let blockInterval = 100; // Number of blocks to wait
 
 
@@ -70,6 +71,20 @@ async function main() {
     );
 
     await contract.deployed()
+
+    for (let i = 0; i < dbLotteryAddresses.length; i++) {
+        const dbLottery =  await getContract("DBContract", dbLotteryAddresses[i])
+        await dbLottery.setAllowedAddress(contract.address)
+    }
+
+    const addresses = splitArrayIntoChunks(dbLotteryAddresses, 500)
+
+
+    const estimate = await contract.estimateGas.setDBContracts(addresses[0])
+    console.log(`.: ${estimate}`);
+
+    await contract.setDBContracts(addresses[0])
+    await contract.setDBContracts(addresses[1])
 
     replaceENV(`LOTTERY_ADDRESS`, contract.address, ".env.mumbai")
 

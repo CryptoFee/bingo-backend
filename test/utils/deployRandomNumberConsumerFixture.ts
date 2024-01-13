@@ -1,5 +1,5 @@
 import {ethers, network} from "hardhat";
-import {getArguments} from "./helpers";
+import {getArguments, splitArrayIntoChunks} from "./helpers";
 
 const {networkConfig} = require("../../hardhat.config.test");
 
@@ -71,13 +71,4 @@ export const createRandomNumberConsumerFixtureDeploy = ({
 
         return {Lottery, MockUSDT, VRFCoordinatorV2Mock, deployer}
     }
-}
-
-function splitArrayIntoChunks<T>(array: T[], chunkSize: number) {
-    let result = [];
-    for (let i = 0; i < array.length; i += chunkSize) {
-        let chunk = array.slice(i, i + chunkSize);
-        result.push(chunk);
-    }
-    return result;
 }
