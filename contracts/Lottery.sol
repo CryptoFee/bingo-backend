@@ -42,7 +42,7 @@ contract Lottery is VRFv2SubscriptionConsumer {
     constructor(
         address usdtTokenAddress,
         uint256 maxAmount,
-        uint8 cycleLimit,
+        uint cycleLimit,
         uint256[] memory prizes,
         uint64 subscriptionId,
         address coordinator,
