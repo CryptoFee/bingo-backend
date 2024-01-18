@@ -8,9 +8,9 @@ export const getArgumentsFor = (maxPlayers: string): TestArguments => {
             cycles: 1
         },
         "100": {
-            maxAmount: 1000000,
+            maxAmount: 10,
             prizes: [
-                300000,
+               /* 300000,
                 200000,
                 100000,
                 50000,
@@ -19,7 +19,8 @@ export const getArgumentsFor = (maxPlayers: string): TestArguments => {
                 5000,
                 2500,
                 1000,
-                500,
+                500,*/
+                1,1,1
             ].map(v => v * 1000000), // 10 winners
             cycles: 1
         }

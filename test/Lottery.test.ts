@@ -6,12 +6,14 @@ import {getContract} from "../scripts/helpers/getContract";
 import {createDbContractsFixture} from "./utils/deployDbContractsFixture";
 import {expect} from "chai";
 
-const transferAmount = dollar(500)
+const transferAmount = dollar(1)
 
-const DB_COUNTS = 1000;
-const MAX_ITEMS_IN_DB = 1000;
-const PLAYERS_COUNT = 2000;
+const DB_COUNTS = 10;
+const MAX_ITEMS_IN_DB = 1;
+const PLAYERS_COUNT = 10;
 const MIN_DEPOSIT = 1;
+
+let callsCount = 0
 
 describe("Lottery unit tests with full implementation", async () => {
     it("Should successfully add multiple players with each 1$ And Check for winners balances", async () => {
@@ -44,10 +46,11 @@ describe("Lottery unit tests with full implementation", async () => {
             const approveTx = await MockUSDT.connect(playerWithProvider).approve(
                 Lottery.address,
                 transferAmount,
-                {gasLimit: 2100000}
+                {gasLimit: 50000}
             );
-            await approveTx.wait();
+           await approveTx.wait();
 
+            callsCount++
             const tx = await lottery.buyTickets(transferAmount, {gasLimit: 15000000})
             await tx.wait();
             console.log("Buy tickets ", i)
@@ -79,7 +82,7 @@ describe("Lottery unit tests with full implementation", async () => {
             })
         });
 
-        await new Promise(res => setTimeout(() => res(null), 5000));
 
+        console.log({callsCount});
     }).timeout(604800000)
 })

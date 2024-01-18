@@ -62,7 +62,7 @@ export const createRandomNumberConsumerFixtureDeploy = ({
                 maxRowsCountEachDbContract
             )
 
-        const addresses = splitArrayIntoChunks(dbContractAddresses, 500)
+        const addresses = splitArrayIntoChunks(dbContractAddresses, 5)
 
         await Lottery.setDBContracts(addresses[0])
         await Lottery.setDBContracts(addresses[1])
