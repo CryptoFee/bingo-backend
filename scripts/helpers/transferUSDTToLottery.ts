@@ -1,8 +1,8 @@
-import {initialTransferAmount} from "../test/utils/createRandomPlayerWithUSDT";
+import {initialTransferAmount} from "../../test/utils/createRandomPlayerWithUSDT";
 import {ethers} from "hardhat";
 import {BigNumber} from "ethers";
-import {dollar} from "../test/utils/helpers";
-import {getContract} from "./helpers/getContract";
+import {dollar} from "../../test/utils/helpers";
+import {getContract} from "./getContract";
 
 export const transferUSDTToLottery = async (usdt: any, lotteryAddress: any, deployer: any, rang: BigNumber[], amountOfPLayer: number) => {
 

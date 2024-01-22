@@ -1,16 +1,22 @@
 import hre from "hardhat";
+import {dollar, getArguments} from "../../test/utils/helpers";
 
 export const env = (envName : string) => process.env[envName] || ""
 export const sleep = async (ml : number) =>  await new Promise(resolve => setTimeout(resolve, ml));
-export async function waitForBlocks(numberOfBlocks : number) {
-    const startBlock = await hre.ethers.provider.getBlockNumber();
-    let currentBlock = startBlock;
+export async function verify(address : string){
+    const {prizes, cycles, maxAmount, maxItemsInDB} = getArguments()
 
-
-
-    while (currentBlock < startBlock + numberOfBlocks) {
-        console.log({startBlock, currentBlock})
-        await sleep(10000)
-        currentBlock = await hre.ethers.provider.getBlockNumber();
-    }
+    await hre.run("verify:verify", {
+        address,
+        constructorArguments: [
+            env("USDT_ADDRESS"),
+            dollar(maxAmount),
+            cycles,
+            prizes,
+            Number(env("SUB_ID")),
+            env("COORDINATOR"),
+            env("KEY_HASH"),
+            maxItemsInDB
+        ],
+    });
 }

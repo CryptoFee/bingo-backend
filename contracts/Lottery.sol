@@ -5,7 +5,6 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "./VRFv2SubscriptionConsumer.sol";
 import "./DBContract.sol";
-//import "hardhat/console.sol";
 
 contract Lottery is VRFv2SubscriptionConsumer {
 
@@ -75,7 +74,6 @@ contract Lottery is VRFv2SubscriptionConsumer {
     }
 
     function buyTickets(uint256 amount) external isActive {
-
         require(amount >= _MIN_DEPOSIT, "buyTickets: Amount is less from min deposit!");
         require((_playersCount * _MIN_DEPOSIT) + amount <= _maxAmount, "Too much money.");
 
@@ -96,7 +94,6 @@ contract Lottery is VRFv2SubscriptionConsumer {
         }
 
         emit NewPlayer(msg.sender, _currentCycle, amount);
-
         if (_playersCount == _maxAmount / _MIN_DEPOSIT) {
             _requestId = requestRandomWords(uint32(_prizes.length));
             _isActive = false;
@@ -106,6 +103,10 @@ contract Lottery is VRFv2SubscriptionConsumer {
 
     function getCurrentCycle() external view returns (uint256)  {
         return _currentCycle;
+    }
+
+    function registerSelf() external onlyOwner {
+        addConsumer(address(this));
     }
 
     function getLotteryDetails() external view returns (

@@ -7,19 +7,14 @@ import {createDbContractsFixture} from "./utils/deployDbContractsFixture";
 import {expect} from "chai";
 
 const transferAmount = dollar(1)
-
-const DB_COUNTS = 10;
-const MAX_ITEMS_IN_DB = 1;
-const PLAYERS_COUNT = 10;
 const MIN_DEPOSIT = 1;
-
-let callsCount = 0
 
 describe("Lottery unit tests with full implementation", async () => {
     it("Should successfully add multiple players with each 1$ And Check for winners balances", async () => {
+        const {dbCount, maxItemsInDB, maxAmount} = getArguments()
+
         const dbContracts: any[] = [];
-        // generating 10 contracts and storing them
-        for await (const i of asyncGenerator(DB_COUNTS)) {
+        for await (const i of asyncGenerator(dbCount)) {
             const {DBContract} = await loadFixture(
                 createDbContractsFixture()
             );
@@ -28,16 +23,16 @@ describe("Lottery unit tests with full implementation", async () => {
         const {Lottery, MockUSDT, VRFCoordinatorV2Mock, deployer,} = await loadFixture(
             createRandomNumberConsumerFixtureDeploy({
                 dbContractAddresses: dbContracts.map(c => c.address),
-                maxRowsCountEachDbContract: MAX_ITEMS_IN_DB
+                maxRowsCountEachDbContract: maxItemsInDB
             })
         );
 
-        for await (const i of asyncGenerator(DB_COUNTS)) {
+        for await (const i of asyncGenerator(dbCount)) {
             await dbContracts[i].setAllowedAddress(Lottery.address);
         }
-        const players = await generatePlayers(PLAYERS_COUNT)(MockUSDT, deployer);
+        const players = await generatePlayers(maxAmount)(MockUSDT, deployer);
 
-        for await (const i of asyncGenerator(PLAYERS_COUNT)) {
+        for await (const i of asyncGenerator(maxAmount)) {
             const player = players[i];
             const playerWithProvider = player.connect(deployer.provider!);
             // @ts-ignore
@@ -48,9 +43,8 @@ describe("Lottery unit tests with full implementation", async () => {
                 transferAmount,
                 {gasLimit: 50000}
             );
-           await approveTx.wait();
+            await approveTx.wait();
 
-            callsCount++
             const tx = await lottery.buyTickets(transferAmount, {gasLimit: 15000000})
             await tx.wait();
             console.log("Buy tickets ", i)
@@ -64,25 +58,22 @@ describe("Lottery unit tests with full implementation", async () => {
             Lottery.on("FullFillRandomWords", async (_, randomWords) => {
                 for await (const i of asyncGenerator(randomWords.length)) {
                     try {
-                        const maxAmount = (DB_COUNTS * MAX_ITEMS_IN_DB)
+                        const maxAmount = (dbCount * maxItemsInDB)
                         const luckyNumber = randomWords[i].mod(BigInt(maxAmount / MIN_DEPOSIT))
-                        const currentContractIndex = luckyNumber.div(MAX_ITEMS_IN_DB);
+                        const currentContractIndex = luckyNumber.div(maxItemsInDB);
                         const currentContract = dbContracts[currentContractIndex];
-                        const currentUserIndex = luckyNumber.sub(currentContractIndex.mul(MAX_ITEMS_IN_DB))
+                        const currentUserIndex = luckyNumber.sub(currentContractIndex.mul(maxItemsInDB))
                         const luckyPlayer = await currentContract.getWinnerByIndexAndCycle(currentUserIndex, 1);
 
                         const currentBalance = await MockUSDT.balanceOf(luckyPlayer)
-                        console.log({luckyPlayer, currentBalance})
-                        expect(currentBalance).to.equal(initialTransferAmount.sub(transferAmount).add(BigInt(getArguments().prizes[i])))
+                        expect(currentBalance).to.equal(initialTransferAmount.sub(transferAmount).add(getArguments().prizes[i]))
                     } catch (e) {
+                        console.log({e})
                         reject(e)
                     }
                 }
                 resolve("Success")
             })
         });
-
-
-        console.log({callsCount});
     }).timeout(604800000)
 })

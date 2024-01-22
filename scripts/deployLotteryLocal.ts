@@ -59,7 +59,7 @@ async function main() {
     await contract.setDBContracts(addresses[0])
     await contract.setDBContracts(addresses[1])
 
-    replaceENV(`LOTTERY_ADDRESS`, contract.address, ".env.mumbai")
+    replaceENV(`LOTTERY_ADDRESS`, contract.address, ".env")
 
     let accessToken
 

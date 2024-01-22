@@ -1,6 +1,6 @@
 import hre from "hardhat";
 import {getAbi, replaceAbi, replaceConstantsValue} from "./helpers/replace";
-import {transferUSDTToLottery} from "./transferUSDTToLottery";
+import {transferUSDTToLottery} from "./helpers/transferUSDTToLottery";
 import {dollar} from "../test/utils/helpers";
 import {createUser, getAccessToken, getHttpClient} from "./helpers/auth";
 import {getContract} from "./helpers/getContract";

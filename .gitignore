@@ -24,6 +24,8 @@ coverage/
 
 # Environment variables
 .env
+.env.mumbai
+.env.production
 
 # Compiled JavaScript files
 *.js

@@ -1,7 +1,7 @@
 import hre from "hardhat";
 import {replaceAbi, replaceConstantsValue, replaceENV} from "./helpers/replace";
 
-async function main() {
+export async function main() {
 
     const [deployer] = await hre.ethers.getSigners();
 

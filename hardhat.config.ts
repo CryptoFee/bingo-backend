@@ -32,11 +32,11 @@ const config = {
             }
         },
 
-       /*  mumbai: {
+        /* mumbai: {
              url: `https://polygon-mumbai.infura.io/v3/fd8b36322657478f8798e81ffc6c5e0a`,
              accounts: [process.env.DEPLOYER_PRIVATE_KEY]
          },*/
-        /* polygonMainNet: {
+         /*polygonMainNet: {
              url: `https://polygon-mainnet.infura.io/v3/fd8b36322657478f8798e81ffc6c5e0a`,
              accounts: [process.env.DEPLOYER_PRIVATE_KEY]
          },*/

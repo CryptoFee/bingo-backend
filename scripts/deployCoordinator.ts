@@ -1,7 +1,7 @@
 import hre, {ethers} from "hardhat";
 import {replaceAbi, replaceConstantsValue, replaceENV} from "./helpers/replace";
 
-async function main() {
+export async function main() {
     const BASE_FEE = "10000"
     const GAS_PRICE_LINK = "100" // 0.000000001 LINK per gas
 
